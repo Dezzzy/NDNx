@@ -62,7 +62,7 @@ void CacheDaemon::handleSelfMsg(cMessage* msg)
 
         EV << " handle Self Msg "<< endl;
         cancelEvent(msg);
-        testPit();
+        testFull();
         break;
     case FORWARDING_INFO_TIMER:
         break;
@@ -82,18 +82,18 @@ void CacheDaemon::handleSelfMsg(cMessage* msg)
 
 int CacheDaemon::processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int hopCount)
 {
-    Enter_Method_Silent("processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int hopCount)");
+    //Enter_Method_Silent("processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int hopCount)");
     int instructionStatus;
     int applicationInstruction;
 
     instructionStatus = Cs->retreiveContentStore(name);
-    if(instructionStatus == DATA_FOUND){
+    if(instructionStatus == Cs->DATA_FOUND){
         applicationInstruction = SEND_DATA;
         Pit->deleteEntryFromPIT(name);
     } else{
-        //Pit->
+
         instructionStatus = Pit->updatePendingInterestTable(name,reqAddr,Pit->EXT_REQ,srcAddr);
-        if(instructionStatus == INSERT_COMPLETED){
+        if(instructionStatus == Pit->INSERT_COMPLETED){
             applicationInstruction = SEND_INTEREST;
         } else{
             applicationInstruction = DO_NOTHING;
@@ -105,14 +105,14 @@ int CacheDaemon::processInterest(const char* name, LAddress::L3Type reqAddr, LAd
 
 int CacheDaemon::generateInterestEntry(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr)
 {
-    Enter_Method_Silent("generateInterestEntry(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr)");
+    //Enter_Method_Silent("generateInterestEntry(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr)");
     int instructionStatus;
     int applicationInstruction;
     instructionStatus = Cs->retreiveContentStore(name);
 
-    if(instructionStatus == DATA_NOT_FOUND){
+    if(instructionStatus == Cs->DATA_NOT_FOUND){
         instructionStatus = Pit->updatePendingInterestTable(name, reqAddr, Pit->SELF_REQ, srcAddr);
-        if(instructionStatus == INSERT_COMPLETED){
+        if(instructionStatus == Pit->INSERT_COMPLETED){
             applicationInstruction = SEND_INTEREST;
 
         } else{
@@ -135,7 +135,7 @@ int CacheDaemon::processData(const char* name, int* hopCount, LAddress::L3Type* 
     int* reqType;
 
     instructionStatus = Pit->retreiveEntryFromPIT(name, reqType,reqAddr,iAddr);
-    if(instructionStatus == DATA_FOUND){
+    if(instructionStatus == Pit->DATA_FOUND){
         switch(*reqType){
         case SELF_REQ:
             Cs->updateContentStore(name);
@@ -556,6 +556,51 @@ void CacheDaemon::testPit()
         }
     }
 
+}
+
+void CacheDaemon::testFull()
+{
+    // test process interest function
+    // first generate self, external and dual type requests
+    LAddress::L3Type reqAddress,extAddress, iAddress,requester,interface;
+    int reqType = Pit->EXT_REQ;
+    int checkType = Pit->NO_REQ;
+    int appInstruction;
+
+    reqAddress = LAddress::L3Type(10);
+    extAddress = LAddress::L3Type(100);
+    iAddress = LAddress::L3Type(55);
+    requester = LAddress::L3NULL;
+    interface = LAddress::L3NULL;
+    char** word;
+
+    word = new char*[8];
+    for(int i = 0;i<8;i++){
+        word[i] = new char[100];
+    }
+
+    strcpy(word[0], "Thylamus");
+    strcpy(word[1], "Obscesive");
+    strcpy(word[2], "DogFood");
+    strcpy(word[3], "Foolish");
+    strcpy(word[4], "thingy");
+    strcpy(word[5], "person");
+    strcpy(word[6], "ocd");
+    strcpy(word[7], "danebrentcrowe");
+    appInstruction = generateInterestEntry(word[0],reqAddress,reqAddress);
+    if(appInstruction == SEND_INTEREST){
+        EV<<"interest generation is successful"<<endl;
+        appInstruction = Pit->searchPendingInterestTable(word[0]);
+        if(appInstruction != (CacheSize + 1)){
+            EV<<"true success"<<endl;
+        }
+    } else{
+        EV<<"Interest Testing FAILURE"<<endl;
+    }
+    appInstruction = processInterest(word[1],extAddress,extAddress,3);
+    if(appInstruction == SEND_INTEREST){
+        EV<<"true success"<<endl;
+    }
 }
 /*
  * end of test functions

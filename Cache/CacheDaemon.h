@@ -94,6 +94,7 @@ public:
 
     void testFib();
     void testPit();
+    void testFull();
 protected:
 
     int CacheSize;

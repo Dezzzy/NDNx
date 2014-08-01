@@ -115,6 +115,7 @@ int PendingInterestTable::updatePendingInterestTable(const char* name, LAddress:
         pair<pitControlMap::iterator, bool> ret = removeList.insert(pitPair);
         (ret.first)->second->setContextPointer((void*)(&(ret.first)->first));
         instructionStatus = INSERT_COMPLETED;
+        EV<<"the word being inserted is:"<<name<<endl;
     } else if(updateType == hTable->UPDATE_NAME){
 
         TTL[cacheIndex] = simTime() + timeToLive;
@@ -127,6 +128,7 @@ int PendingInterestTable::updatePendingInterestTable(const char* name, LAddress:
             it->second->setContextPointer((void*)(&it->first));
             scheduleAt(simTime()+(timeToLive*2), it->second);
         }
+        EV<<"the word being updated is:"<<name<<endl;
     }
 
     return instructionStatus;
