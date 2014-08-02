@@ -59,8 +59,7 @@ void NdnApplLayer::handleLowerMsg(cMessage* msg)
     }
 }
 
-
-void NdnApplLayer::handleSelfMsg(cMessage* msg)
+Void NdnApplLayer::handleSelfMsg(cMessage* msg)
 {
     int distance;
     if(msg->getKind() == BASE_NDN_START_MESSAGE){
@@ -76,6 +75,10 @@ void NdnApplLayer::handleSelfMsg(cMessage* msg)
     }
 }
 
+/*
+* sendNextMsg(...) generates the given type, this is the generic method used to set each field of the 
+* Application Packet. 
+*/
 void NdnApplLayer::sendNextMsg(const char* name, int pktType, LAddress::L3Type pktCreator,LAddress::L3Type destAddr, int propagationDistance, int hopNum, int msgId)
 {
     NdnApplPkt* pkt = new NdnApplPkt(name, pktType);
@@ -95,6 +98,13 @@ void NdnApplLayer::sendNextMsg(const char* name, int pktType, LAddress::L3Type p
 
 }
 
+/*
+* sendNextMsg(NdnApplPkt* pkt, LAddress::L3Type dAddr):
+* This is a replication of the generic sendNextMsg Method.
+* However the new destination address is added and all hop numbers are incremented or changed to the 
+* appropriate values
+*/
+
 void NdnApplLayer::sendNextMsg(NdnApplPkt* pkt, LAddress::L3Type dAddr)
 {
     NdnApplPkt* m;
@@ -107,6 +117,12 @@ void NdnApplLayer::sendNextMsg(NdnApplPkt* pkt, LAddress::L3Type dAddr)
     sendDown(m);
 }
 
+/*
+* generateInterestPkt(const char* name):
+* This is method used to generate new interest packets in conjunction with sendNextMsg
+* The interest is inserted into the Pending Interest Table with given name and 
+* the sent
+*/
 void NdnApplLayer::generateInterestPkt(const char* name)
 {
     int instructionStatus = 0;
@@ -128,6 +144,11 @@ void NdnApplLayer::generateInterestPkt(const char* name)
     }
 }
 
+/*
+* generateDataPkt(const char*,LAddress::L3Type, int hopDistance):
+* THIS FUNCTION NEEDS ATTENTION!!!!
+* This function generates a data packet and inserts it into the Content Store
+*/
 void NdnApplLayer::generateDataPkt(const char* name,LAddress::L3Type destAddr, int hopDistance)
 {
     int msgId = uniform(0,1000);
@@ -137,6 +158,12 @@ void NdnApplLayer::generateDataPkt(const char* name,LAddress::L3Type destAddr, i
     sendNextMsg(name, BASE_NDN_DATA_MESSAGE,myApplAddr(),destAddr,hopDistance,0,msgId);
 }
 
+/*
+* processInterestPkt(NdnApplPkt*):
+* This functions processes the interest packet and completes the necessary functions based on responses 
+* the Pending Interest Table and Content Store
+* For full Methodology, see Name Data Protocol Documentation
+*/
 void NdnApplLayer::processInterestPkt(NdnApplPkt* pkt)
 {
     int instructionStatus;
@@ -178,6 +205,12 @@ void NdnApplLayer::processInterestPkt(NdnApplPkt* pkt)
     }
 }
 
+
+/*
+* processDataPkt(NdnApplPkt*):
+* Similar to processInterestPkt, for data packets only
+* see protocol documentation for full description
+*/
 void NdnApplLayer::processDataPkt(NdnApplPkt* pkt)
 {
     int instructionStatus;
@@ -205,6 +238,11 @@ void NdnApplLayer::processDataPkt(NdnApplPkt* pkt)
     }
 }
 
+/*
+* processMapData(NdnApplPkt*):
+* This function strips incoming packets of the attached name and name space data, which is used in 
+* mapping the used name space in the network.
+*/
 void NdnApplLayer::ProcessMapData(NdnApplPkt* msg)
 {
     uint32_t** oneHopList;
@@ -264,6 +302,11 @@ void NdnApplLayer::ProcessMapData(NdnApplPkt* msg)
     cDaemon->updateForwardingInfoBase(msg->getSrcAddr(), oneHopList, twoHopList, threeHopList,xHopList);
 }
 
+/*
+* GenerateMapData(NdnApplPkt*):
+* Generates the map data needed to sent along the interest/data packet
+* The data is generated and attached to the packet and then sent out
+*/
 void NdnApplLayer::GenerateMapData(NdnApplPkt* msg)
 {
     uint32_t** oneHopList;
@@ -319,6 +362,10 @@ void NdnApplLayer::GenerateMapData(NdnApplPkt* msg)
     msg->setThCsBFM4(threeHopList[0][0]);
 }
 
+/*
+* isKnownMsg(int):
+* function used to determine whether packet has been received before
+*/
 bool NdnApplLayer::isKnownMsg(int msgId)
 {
     MsgIdSet::iterator it = KnownMsgs.find(msgId);
@@ -326,6 +373,10 @@ bool NdnApplLayer::isKnownMsg(int msgId)
     return it != KnownMsgs.end();
 }
 
+/*
+* popMsgInterestQueue(cMessage*):
+* pops the interest of Interest Queue that must be resent
+*/
 void NdnApplLayer::popMsgInterestQueue(cMessage* msg)
 {
     SentMsgs::iterator it = InterestMsgs.begin();
@@ -347,6 +398,11 @@ void NdnApplLayer::popMsgInterestQueue(cMessage* msg)
 
 }
 
+/*
+* deleteMsgInterestQueue(const char*):
+* deletes interest from Interest Queue, either due to having reached end of life or 
+* or the connected data packet was received
+*/
 void NdnApplLayer::deleteMsgInterestQueue(const char* name)
 {
     SentMsgs::iterator it = InterestMsgs.find(name);
@@ -359,6 +415,11 @@ void NdnApplLayer::deleteMsgInterestQueue(const char* name)
     }
 }
 
+/*
+* insertMsgInterestQueue(reMsg*):
+* upon interest packet generation, a duplicate packet is created and placed in the Interest Queue
+* for resending purposes if TTL on data packet reception is exceeded
+*/
 void NdnApplLayer::insertMsgInterestQueue(reMsg* qMsg)
 {
     if(InterestMsgs.empty()){
