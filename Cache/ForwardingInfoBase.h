@@ -30,6 +30,7 @@ public:
     typedef std::bitset<128> BloomFilterMap;
     typedef std::map<LAddress::L3Type, BloomFilterMap> NeighbourMap;
     typedef std::map<LAddress::L3Type, cMessage*> ControlMap;
+    typedef std::multimap<LAddress::L3Type,cMessage*>NameControlMap;
     typedef std::map<const char*, cMessage*> NameMap;
 
     enum FORWARDING_INFO_BASE_HOP_TYPES{
@@ -100,7 +101,7 @@ protected:
     NeighbourMap pitXHopList;
     NeighbourMap csXHopList;
     ControlMap removeList;
-    ControlMap nameInterfaceRemoveList;
+    NameControlMap nameInterfaceRemoveList;
 
     virtual void initialize(int stage);
     virtual void handleMessage(cMessage *msg);
