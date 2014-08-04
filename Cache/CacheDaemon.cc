@@ -87,13 +87,13 @@ int CacheDaemon::processInterest(const char* name, LAddress::L3Type reqAddr, LAd
     int applicationInstruction;
 
     instructionStatus = Cs->retreiveContentStore(name);
-    if(instructionStatus == Cs->DATA_FOUND){
+    if(instructionStatus == ContentStore::DATA_FOUND){
         applicationInstruction = SEND_DATA;
         Pit->deleteEntryFromPIT(name);
     } else{
 
         instructionStatus = Pit->updatePendingInterestTable(name,reqAddr,Pit->EXT_REQ,srcAddr);
-        if(instructionStatus == Pit->INSERT_COMPLETED){
+        if(instructionStatus == PendingInterestTable::INSERT_COMPLETED){
             applicationInstruction = SEND_INTEREST;
         } else{
             applicationInstruction = DO_NOTHING;
@@ -110,7 +110,7 @@ int CacheDaemon::generateInterestEntry(const char* name, LAddress::L3Type reqAdd
     int applicationInstruction;
     instructionStatus = Cs->retreiveContentStore(name);
 
-    if(instructionStatus == Cs->DATA_NOT_FOUND){
+    if(instructionStatus == ContentStore::DATA_NOT_FOUND){
         instructionStatus = Pit->updatePendingInterestTable(name, reqAddr, Pit->SELF_REQ, srcAddr);
         if(instructionStatus == Pit->INSERT_COMPLETED){
             applicationInstruction = SEND_INTEREST;
@@ -135,18 +135,18 @@ int CacheDaemon::processData(const char* name, int* hopCount, LAddress::L3Type* 
     int* reqType;
 
     instructionStatus = Pit->retreiveEntryFromPIT(name, reqType,reqAddr,iAddr);
-    if(instructionStatus == Pit->DATA_FOUND){
+    if(instructionStatus == PendingInterestTable::DATA_FOUND){
         switch(*reqType){
-        case SELF_REQ:
+        case PendingInterestTable::SELF_REQ:
             Cs->updateContentStore(name);
             applicationInstruction = INTEREST_FOUND;
             break;
-        case EXT_REQ:
+        case PendingInterestTable::EXT_REQ:
             Fib->retreiveEntryFromNameInterfaceList(name, hopCount, iAddr);
             applicationInstruction = SEND_DATA;
 
             break;
-        case DUAL_TYPE_REQ:
+        case PendingInterestTable::DUAL_TYPE_REQ:
             Cs->updateContentStore(name);
             Fib->retreiveEntryFromNameInterfaceList(name, hopCount, iAddr);
             applicationInstruction = SEND_DATA_INTEREST_FOUND;
@@ -323,7 +323,7 @@ int CacheDaemon::searchForData(const char* name, LAddress::L3Type* iAddr, int* m
 
     // broadcast heuristic
     float broadcastLimit = (a*limit[0])+(b*limit[1])+(c*limit[2])+(d*limit[3]);
-    if(broadcastLimit > 3){
+    if(broadcastLimit > 3 && broadcastLimit < 1){
         *iAddr = LAddress::L3BROADCAST;
     } else{
         // determine mix and max distances
@@ -355,256 +355,7 @@ int CacheDaemon::searchForData(const char* name, LAddress::L3Type* iAddr, int* m
  * ***************************************************************************
  */
 
-/*
- * test functions
- */
 
-void CacheDaemon::testFib()
-{
-    EV<<"starting fib test"<<endl;
-    // name space test function
-
-    // generate a dummy set of hop lists
-    int pitBloomFilter[128];
-    int csBloomFilter[128];
-    char** word;
-    uint32_t** oneHop;
-    uint32_t** twoHop;
-    uint32_t** threeHop;
-    uint32_t** xHop;
-
-    oneHop = new uint32_t*[2];
-    twoHop = new uint32_t*[2];
-    threeHop = new uint32_t*[2];
-    xHop = new uint32_t*[2];
-
-    for(int j = 0 ;j< 2;j++){
-        oneHop[j] = new uint32_t[4];
-        twoHop[j] = new uint32_t[4];
-        threeHop[j] = new uint32_t[4];
-        xHop[j] = new uint32_t[4];
-    }
-
-
-    word = new char*[8];
-    for(int i = 0;i<8;i++){
-        word[i] = new char[100];
-    }
-
-    strcpy(word[0], "Thylamus");
-    strcpy(word[1], "Obscesive");
-    strcpy(word[2], "DogFood");
-    strcpy(word[3], "Foolish");
-    strcpy(word[4], "thingy");
-    strcpy(word[5], "person");
-    strcpy(word[6], "ocd");
-    strcpy(word[7], "danebrentcrowe");
-
-    uint32_t h1;
-    uint32_t h2;
-
-    h1 = mmHasher->MurmurHash3(word[0],strlen(word[0]),1)%CacheSize;
-    h2 = spookyHasher->SpookHash(word[0],strlen(word[0]),1)%CacheSize;
-    pitBloomFilter[h1] = 1;
-    pitBloomFilter[h2] = 1;
-    csBloomFilter[h1] = 1;
-    csBloomFilter[h2] = 1;
-
-    h1 = mmHasher->MurmurHash3(word[4],strlen(word[4]),1)%CacheSize;
-    h2 = spookyHasher->SpookHash(word[4],strlen(word[4]),1)%CacheSize;
-    pitBloomFilter[h1] = 1;
-    pitBloomFilter[h2] = 1;
-    csBloomFilter[h1] = 1;
-    csBloomFilter[h2] = 1;
-
-
-    h1 = mmHasher->MurmurHash3(word[5],strlen(word[5]),1)%CacheSize;
-    h2 = spookyHasher->SpookHash(word[5],strlen(word[5]),1)%CacheSize;
-    pitBloomFilter[h1] = 1;
-    pitBloomFilter[h2] = 1;
-    csBloomFilter[h1] = 1;
-    csBloomFilter[h2] = 1;
-
-    arrayToUlong(pitBloomFilter,oneHop[0]);
-    arrayToUlong(csBloomFilter,oneHop[1]);
-
-    /*
-    h1 = mmHasher->MurmurHash3(word[1],strlen(word[1]),1)%CacheSize;
-    h2 = spookyHasher->SpookHash(word[1],strlen(word[1]),1)%CacheSize;
-    pitBloomFilter[h1] = 1;
-    pitBloomFilter[h2] = 1;
-    csBloomFilter[h1] = 1;
-    csBloomFilter[h2] = 1;
-    arrayToUlong(pitBloomFilter,twoHop[0]);
-    arrayToUlong(csBloomFilter,twoHop[1]);
-    pitBloomFilter[h1] = 0;
-    pitBloomFilter[h2] = 0;
-    csBloomFilter[h1] = 0;
-    csBloomFilter[h2] = 0;
-
-
-    h1 = mmHasher->MurmurHash3(word[2],strlen(word[2]),1)%CacheSize;
-    h2 = spookyHasher->SpookHash(word[2],strlen(word[2]),1)%CacheSize;
-    pitBloomFilter[h1] = 1;
-    pitBloomFilter[h2] = 1;
-    csBloomFilter[h1] = 1;
-    csBloomFilter[h2] = 1;
-    arrayToUlong(pitBloomFilter,threeHop[0]);
-    arrayToUlong(csBloomFilter,threeHop[1]);
-    pitBloomFilter[h1] = 0;
-    pitBloomFilter[h2] = 0;
-    csBloomFilter[h1] = 0;
-    csBloomFilter[h2] = 0;
-
-
-    h1 = mmHasher->MurmurHash3(word[3],strlen(word[3]),1)%CacheSize;
-    h2 = spookyHasher->SpookHash(word[3],strlen(word[3]),1)%CacheSize;
-    pitBloomFilter[h1] = 1;
-    pitBloomFilter[h2] = 1;
-    csBloomFilter[h1] = 1;
-    csBloomFilter[h2] = 1;
-    arrayToUlong(pitBloomFilter,xHop[0]);
-    arrayToUlong(csBloomFilter,xHop[1]);
-    pitBloomFilter[h1] = 0;
-    pitBloomFilter[h2] = 0;
-    csBloomFilter[h1] = 0;
-    csBloomFilter[h2] = 0;
-
-     */
-    LAddress::L3Type hopAddress = LAddress::L3Type(100);
-    LAddress::L3Type dummyAddress = LAddress::L3Type(56);
-    updateForwardingInfoBase(hopAddress,oneHop,twoHop,threeHop,xHop);
-
-    EV<<"UPDATE Test is now complete"<<endl;
-
-    // second test
-    LAddress::L3Type searchAddress = LAddress::L3NULL;
-    int mm[2];
-    searchForInterest(word[4],&searchAddress,mm);
-    if(searchAddress == hopAddress){
-        EV<<"success for SEARCH"<<endl;
-        EV<<"at min distance:"<<mm[0]<<endl;
-    } else{
-        EV<<"address was not found"<<endl;
-    }
-    Fib->getHopMap(Fib->ONE_HOP,pitBloomFilter,csBloomFilter);
-    uint32_t checkList[4];
-    arrayToUlong(pitBloomFilter,checkList);
-    EV<<"check list:"<<checkList[0]<<";"<<checkList[1]<<";"<<checkList[2]<<";"<<checkList[3]<<";"<<endl;
-
-    int testStatus;
-    updateInterfaceList(word[0],3,hopAddress);
-    updateInterfaceList(word[0],5, dummyAddress);
-    EV<<"update name interface list complete"<<endl;
-    int hopDistance;
-    searchAddress = LAddress::L3NULL;
-    testStatus = getRoutingInfo(word[1],&hopDistance,&searchAddress);
-    if(testStatus == Fib->NAME_NOT_FOUND){
-        EV<<"name not found"<<endl;
-    } else if(hopDistance == 3 && searchAddress == hopAddress){
-
-        EV<<"name interface search successful"<<endl;
-
-    } else{
-        EV<<"interface search FAILURE"<<endl;
-    }
-}
-
-void CacheDaemon::testPit()
-{
-    LAddress::L3Type reqAddress, iAddress,requester,interface;
-    int reqType = Pit->EXT_REQ;
-    int checkType = Pit->NO_REQ;
-
-    reqAddress = LAddress::L3Type(10);
-    iAddress = LAddress::L3Type(55);
-    requester = LAddress::L3NULL;
-    interface = LAddress::L3NULL;
-    char** word;
-
-    word = new char*[8];
-    for(int i = 0;i<8;i++){
-        word[i] = new char[100];
-    }
-
-    strcpy(word[0], "Thylamus");
-    strcpy(word[1], "Obscesive");
-    strcpy(word[2], "DogFood");
-    strcpy(word[3], "Foolish");
-    strcpy(word[4], "thingy");
-    strcpy(word[5], "person");
-    strcpy(word[6], "ocd");
-    strcpy(word[7], "danebrentcrowe");
-    int instructionStatus = Pit->updatePendingInterestTable(word[0], reqAddress,reqType,iAddress);
-    if(instructionStatus == Pit->INSERT_COMPLETED){
-        EV<<"name insertion at Pit SUCCESS"<<endl;
-        instructionStatus = Pit->updatePendingInterestTable(word[0], reqAddress,reqType,iAddress);
-        if(instructionStatus == Pit->UPDATE_COMPLETED){
-            EV<<"UPDATE METHOD IS WORKING COMPLETELY"<<endl;
-            instructionStatus = Pit->retreiveEntryFromPIT(word[0],&checkType,&requester,&interface);
-            if(instructionStatus == Pit->DATA_FOUND){
-                if(checkType == reqType){
-                    EV<<"requestType match!";
-                }
-                if(requester == reqAddress){
-                    EV<<"creator match!"<<endl;
-                }
-                if(interface == iAddress){
-                    EV<<"interface MATCH!"<<endl;
-                }
-            }
-        }
-    }
-
-}
-
-void CacheDaemon::testFull()
-{
-    // test process interest function
-    // first generate self, external and dual type requests
-    LAddress::L3Type reqAddress,extAddress, iAddress,requester,interface;
-    int reqType = Pit->EXT_REQ;
-    int checkType = Pit->NO_REQ;
-    int appInstruction;
-
-    reqAddress = LAddress::L3Type(10);
-    extAddress = LAddress::L3Type(100);
-    iAddress = LAddress::L3Type(55);
-    requester = LAddress::L3NULL;
-    interface = LAddress::L3NULL;
-    char** word;
-
-    word = new char*[8];
-    for(int i = 0;i<8;i++){
-        word[i] = new char[100];
-    }
-
-    strcpy(word[0], "Thylamus");
-    strcpy(word[1], "Obscesive");
-    strcpy(word[2], "DogFood");
-    strcpy(word[3], "Foolish");
-    strcpy(word[4], "thingy");
-    strcpy(word[5], "person");
-    strcpy(word[6], "ocd");
-    strcpy(word[7], "danebrentcrowe");
-    appInstruction = generateInterestEntry(word[0],reqAddress,reqAddress);
-    if(appInstruction == SEND_INTEREST){
-        EV<<"interest generation is successful"<<endl;
-        appInstruction = Pit->searchPendingInterestTable(word[0]);
-        if(appInstruction != (CacheSize + 1)){
-            EV<<"true success"<<endl;
-        }
-    } else{
-        EV<<"Interest Testing FAILURE"<<endl;
-    }
-    appInstruction = processInterest(word[1],extAddress,extAddress,3);
-    if(appInstruction == SEND_INTEREST){
-        EV<<"true success"<<endl;
-    }
-}
-/*
- * end of test functions
- */
 
 
 /*

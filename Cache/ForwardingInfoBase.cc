@@ -120,9 +120,9 @@ void ForwardingInfoBase::updateNameInterfaceList(const char* name, int hCount, L
         InterfaceAddress[cacheIndex][0] = iAddress;
         cMessage* removeName = new cMessage(name, NAME_INTERFACE_CONTROL_MESSAGE);
         scheduleAt(simTime() + timeToLive, removeName);
-        ControlMap::key_type nodeAddress = iAddress;
-        ControlMap::value_type pairToInsert = make_pair(nodeAddress, removeName);
-        pair<ControlMap::iterator, bool> ret = nameInterfaceRemoveList.insert(pairToInsert);
+        NameControlMap::key_type nodeAddress = iAddress;
+        NameControlMap::value_type pairToInsert = make_pair(nodeAddress, removeName);
+        ControlMap::iterator ret = nameInterfaceRemoveList.insert(pairToInsert);
 
         // set the context pointer to point to the integer that resembles to the address of
         // the node to be removed when the corresponding event occurs
@@ -142,8 +142,8 @@ void ForwardingInfoBase::updateNameInterfaceList(const char* name, int hCount, L
         }
         if(interfaceFound){
             HopCount[cacheIndex][counter] = hCount;
-            ControlMap::key_type nodeAddress = iAddress;
-            ControlMap::iterator it = nameInterfaceRemoveList.find(nodeAddress);
+            NameControlMap::key_type nodeAddress = iAddress;
+            NameControlMap::iterator it = nameInterfaceRemoveList.find(nodeAddress);
             if(it != nameInterfaceRemoveList.end()){
                 cancelEvent(it->second);
                 it->second->setContextPointer((void*)(&it->first));
@@ -154,13 +154,13 @@ void ForwardingInfoBase::updateNameInterfaceList(const char* name, int hCount, L
             InterfaceAddress[cacheIndex][counter] = iAddress;
             cMessage* removeName = new cMessage(name, NAME_INTERFACE_CONTROL_MESSAGE);
             scheduleAt(simTime() + timeToLive, removeName);
-            ControlMap::key_type nodeAddress = iAddress;
-            ControlMap::value_type pairToInsert = make_pair(nodeAddress, removeName);
-            pair<ControlMap::iterator, bool> ret = nameInterfaceRemoveList.insert(pairToInsert);
+            NameControlMap::key_type nodeAddress = iAddress;
+            NameControlMap::value_type pairToInsert = make_pair(nodeAddress, removeName);
+            ControlMap::iterator ret = nameInterfaceRemoveList.insert(pairToInsert);
 
             // set the context pointer to point to the integer that resembles to the address of
             // the node to be removed when the corresponding event occurs
-            (ret.first)->second->setContextPointer((void*)(&(ret.first)->first));
+            ret->second->setContextPointer((void*)(&ret->first));
             noOfInterfaces[cacheIndex]++;
 
         }
@@ -176,12 +176,16 @@ void ForwardingInfoBase::deleteEntryFromNameInterfaceList(cMessage* msg)
     LAddress::L3Type iAddress;
 
     EV<<"starting delete of name interface list entry"<<endl;
-    const ControlMap::key_type& node = *static_cast<ControlMap::key_type*>( msg->getContextPointer() );
-    EV << "handleSelfMsg(): Remove node "<< node <<" from NeighMap!" << endl;
-    ControlMap::iterator it = nameInterfaceRemoveList.find(node);
+    const NameControlMap::key_type& node = *static_cast<NameControlMap::key_type*>( msg->getContextPointer() );
+    std::pair<NameControlMap::iterator,NameControlMap::iterator> range = nameInterfaceRemoveList.equal_range(node);
+    for(NameControlMap::iterator it = range.first; it != range.second;++it){
+        if(strcmp(msg->getName(),it->second->getName()) == 0){
+            nameInterfaceRemoveList.erase(it);
+        }
+    }
 
     cancelAndDelete(msg);
-    nameInterfaceRemoveList.erase(it);
+
 
 
     iAddress = node;

@@ -92,9 +92,7 @@ public:
     int searchForData(const char* name, LAddress::L3Type* iAddr, int* minMax);
 
 
-    void testFib();
-    void testPit();
-    void testFull();
+
 protected:
 
     int CacheSize;
