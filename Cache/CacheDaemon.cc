@@ -62,7 +62,7 @@ void CacheDaemon::handleSelfMsg(cMessage* msg)
 
         EV << " handle Self Msg "<< endl;
         cancelEvent(msg);
-        testFull();
+        //testFull();
         break;
     case FORWARDING_INFO_TIMER:
         break;
