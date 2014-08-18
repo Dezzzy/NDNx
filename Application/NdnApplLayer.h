@@ -18,7 +18,7 @@
 
 #include <omnetpp.h>
 #include "NdnDaemon.h"
-#include "NdnApplPkt_m.h"
+//#include "NdnApplPkt_m.h"
 #include "BaseApplLayer.h"
 #include "CacheDaemon.h"
 
@@ -30,7 +30,7 @@
 #define SHORT_HOP 1
 #define LONG_HOP 6
 
-class NdnApplPkt;
+//class NdnApplPkt;
 
 class NdnApplLayer : public BaseApplLayer
 {
@@ -83,6 +83,7 @@ protected:
         error("BaseNetwLayer does not handle control messages");
     };
 
+/*
     void sendNextMsg(const char* name, int pktType, LAddress::L3Type pktCreator,LAddress::L3Type destAddr, int propagationDistance, int hopNum,int msgId);
     void sendNextMsg(NdnApplPkt* pkt, LAddress::L3Type dAddr);
     void generateInterestPkt(const char* name);
@@ -91,10 +92,12 @@ protected:
     void processDataPkt(NdnApplPkt* pkt);
     void ProcessMapData(NdnApplPkt* msg);
     void GenerateMapData(NdnApplPkt* msg);
+*/
     bool isKnownMsg(int msgId);
     void popMsgInterestQueue(cMessage* msg);
     void deleteMsgInterestQueue(const char* name);
     void insertMsgInterestQueue(reMsg* qMsg);
+
 };
 
 #endif

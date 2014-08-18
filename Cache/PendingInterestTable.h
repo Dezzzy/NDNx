@@ -76,8 +76,8 @@ protected:
     LAddress::L3Type* RequesterAddress;
     LAddress::L3Type* InterfaceAddress;
 
-    int CacheSize = 128;
-    int WordSize = 100;
+    const static int CacheSize = 128;
+    const static int WordSize = 100;
     SpookyHash* spookyHasher;
     MurmurHash* mmHasher;
     HashTable* hTable;

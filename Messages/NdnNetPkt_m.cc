@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgc 4.3 from NDNx/Messages/NdnNetwPkt.msg.
+// Generated file, do not edit! Created by opp_msgc 4.5 from NDNx/Messages/NdnNetPkt.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:
@@ -10,11 +10,10 @@
 
 #include <iostream>
 #include <sstream>
-#include "NdnNetwPkt_m.h"
+#include "NdnNetPkt_m.h"
 
-// Template rule which fires if a struct or class doesn't have operator<<
-template<typename T>
-std::ostream& operator<<(std::ostream& out,const T&) {return out;}
+USING_NAMESPACE
+
 
 // Another default rule (prevents compiler from choosing base class' doPacking())
 template<typename T>
@@ -30,9 +29,33 @@ void doUnpacking(cCommBuffer *, T& t) {
 
 
 
+// Template rule for outputting std::vector<T> types
+template<typename T, typename A>
+inline std::ostream& operator<<(std::ostream& out, const std::vector<T,A>& vec)
+{
+    out.put('{');
+    for(typename std::vector<T,A>::const_iterator it = vec.begin(); it != vec.end(); ++it)
+    {
+        if (it != vec.begin()) {
+            out.put(','); out.put(' ');
+        }
+        out << *it;
+    }
+    out.put('}');
+    
+    char buf[32];
+    sprintf(buf, " (size=%u)", (unsigned int)vec.size());
+    out.write(buf, strlen(buf));
+    return out;
+}
+
+// Template rule which fires if a struct or class doesn't have operator<<
+template<typename T>
+inline std::ostream& operator<<(std::ostream& out,const T&) {return out;}
+
 Register_Class(NdnNetwPkt);
 
-NdnNetwPkt::NdnNetwPkt(const char *name, int kind) : NetwPkt(name,kind)
+NdnNetwPkt::NdnNetwPkt(const char *name, int kind) : ::NetwPkt(name,kind)
 {
     this->pitBloomFilterMap1_var = 0;
     this->pitBloomFilterMap2_var = 0;
@@ -44,7 +67,7 @@ NdnNetwPkt::NdnNetwPkt(const char *name, int kind) : NetwPkt(name,kind)
     this->csBloomFilterMap4_var = 0;
 }
 
-NdnNetwPkt::NdnNetwPkt(const NdnNetwPkt& other) : NetwPkt(other)
+NdnNetwPkt::NdnNetwPkt(const NdnNetwPkt& other) : ::NetwPkt(other)
 {
     copy(other);
 }
@@ -56,7 +79,7 @@ NdnNetwPkt::~NdnNetwPkt()
 NdnNetwPkt& NdnNetwPkt::operator=(const NdnNetwPkt& other)
 {
     if (this==&other) return *this;
-    NetwPkt::operator=(other);
+    ::NetwPkt::operator=(other);
     copy(other);
     return *this;
 }
@@ -76,7 +99,7 @@ void NdnNetwPkt::copy(const NdnNetwPkt& other)
 
 void NdnNetwPkt::parsimPack(cCommBuffer *b)
 {
-    NetwPkt::parsimPack(b);
+    ::NetwPkt::parsimPack(b);
     doPacking(b,this->creatorAddr_var);
     doPacking(b,this->pitBloomFilterMap1_var);
     doPacking(b,this->pitBloomFilterMap2_var);
@@ -90,7 +113,7 @@ void NdnNetwPkt::parsimPack(cCommBuffer *b)
 
 void NdnNetwPkt::parsimUnpack(cCommBuffer *b)
 {
-    NetwPkt::parsimUnpack(b);
+    ::NetwPkt::parsimUnpack(b);
     doUnpacking(b,this->creatorAddr_var);
     doUnpacking(b,this->pitBloomFilterMap1_var);
     doUnpacking(b,this->pitBloomFilterMap2_var);
@@ -404,18 +427,10 @@ const char *NdnNetwPktDescriptor::getFieldStructName(void *object, int field) co
             return basedesc->getFieldStructName(object, field);
         field -= basedesc->getFieldCount(object);
     }
-    static const char *fieldStructNames[] = {
-        "LAddress::L3Type",
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
+    switch (field) {
+        case 0: return opp_typename(typeid(LAddress::L3Type));
+        default: return NULL;
     };
-    return (field>=0 && field<9) ? fieldStructNames[field] : NULL;
 }
 
 void *NdnNetwPktDescriptor::getFieldStructPointer(void *object, int field, int i) const

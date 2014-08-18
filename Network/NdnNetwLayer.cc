@@ -23,8 +23,8 @@ void NdnNetwLayer::initialize(int stage)
     BaseNetwLayer::initialize(stage);
     if(stage == 0){
         CacheSize = par("CacheSize");
-        store = new NdnDaemon::ndStore;
-        ndnDaemon = FindModule<NdnDaemon*>::findSubModule(findHost());
+
+
     }
     if(stage == 1){
 
@@ -42,43 +42,22 @@ void NdnNetwLayer::handleSelfMsg(cMessage *msg)
 
 void NdnNetwLayer::handleLowerMsg(cMessage* msg)
 {
-    int csBloomFilterMap[CacheSize];
-    int pitBloomFilterMap[CacheSize];
-    NdnNetwPkt* pkt = check_and_cast<NdnNetwPkt*>(msg);
-    cObject* cInfo = pkt->removeControlInfo();
-    // do something with cInfo
-    delete cInfo;
-    //extractBloomFilter(pkt, pitBloomFilterMap,csBloomFilterMap);
 
-    sendUp(decapMsg(pkt));
 }
 
 void NdnNetwLayer::handleUpperMsg(cMessage* msg)
 {
-    sendDown(encapMsg(msg));
+    //sendDown(encapMsg(msg));
 }
 
-cMessage* NdnNetwLayer::decapMsg(NdnNetwPkt* msg)
+cMessage* NdnNetwLayer::decapMsg(cMessage* msg)
 {
-    cMessage* m = msg->decapsulate();
-    //m->setControlInfo(msg->getDestAddr());
-    delete msg;
-    return m;
+
 }
 
-NdnNetwPkt* NdnNetwLayer::encapMsg(cMessage* msg)
+cMessage* NdnNetwLayer::encapMsg(cMessage* msg)
 {
-    uint32_t pitBloomFilter[4];
-    uint32_t csBloomFilter[4];
-    cPacket* m = static_cast<cPacket*>(msg);
-    NdnNetwPkt* pkt = new NdnNetwPkt(msg->getName(),msg->getKind());
-    //getBloomFilter(pkt, pitBloomFilter, csBloomFilter);
-    pkt->setSrcAddr(myNetwAddr);
-    pkt->setDestAddr(LAddress::L3BROADCAST);
-    pkt->setCreatorAddr(myNetwAddr);
 
-    pkt->encapsulate(m);
-    return pkt;
 }
 
 

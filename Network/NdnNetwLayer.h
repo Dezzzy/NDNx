@@ -18,10 +18,10 @@
 
 #include <omnetpp.h>
 #include "BaseNetwLayer.h"
-#include "NdnNetwPkt_m.h"
+//#include "NdnNetwPkt_m.h"
 #include "NdnDaemon.h"
 
-class NdnNetwPkt;
+//class NdnNetwPkt;
 
 class NdnNetwLayer : public BaseNetwLayer
 {
@@ -32,22 +32,19 @@ public:
         NDN_NETW_SELF_MESSAGE
     };
 
-    NdnDaemon::ndStore* store;
+
     virtual void initialize(int stage);
   protected:
     int CacheSize;
-    NdnDaemon* ndnDaemon;
+
 
     virtual void handleSelfMsg(cMessage* msg);
     virtual void handleLowerMsg(cMessage *msg);
     virtual void handleUpperMsg(cMessage *msg);
-    cMessage* decapMsg(NdnNetwPkt* msg);
-    NdnNetwPkt* encapMsg(cMessage* msg);
+    cMessage* decapMsg(cMessage* msg);
+    cMessage* encapMsg(cMessage* msg);
 
-    void sendNetwPkt();
-    void generateRoutingInfo();
-    void extractBloomFilter(NdnNetwPkt* m, int* pitBloomFilter, int* csBloomFilter);
-    void getBloomFilter(NdnNetwPkt* pkt,uint32_t* pitBloomFilter, uint32_t* csBloomFilter);
+
 
 
 };

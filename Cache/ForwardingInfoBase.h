@@ -74,8 +74,8 @@ public:
     void removeMapFromFib(cMessage* msg);
 
 protected:
-    int CacheSize = 128;
-    int WordSize = 100;
+    const static int CacheSize = 128;
+    const static int WordSize = 100;
     SpookyHash* spookyHasher;
     MurmurHash* mmHasher;
     HashTable* hTable;

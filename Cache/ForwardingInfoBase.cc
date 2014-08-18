@@ -122,11 +122,11 @@ void ForwardingInfoBase::updateNameInterfaceList(const char* name, int hCount, L
         scheduleAt(simTime() + timeToLive, removeName);
         NameControlMap::key_type nodeAddress = iAddress;
         NameControlMap::value_type pairToInsert = make_pair(nodeAddress, removeName);
-        ControlMap::iterator ret = nameInterfaceRemoveList.insert(pairToInsert);
+        NameControlMap::iterator ret = nameInterfaceRemoveList.insert(pairToInsert);
 
         // set the context pointer to point to the integer that resembles to the address of
         // the node to be removed when the corresponding event occurs
-        (ret.first)->second->setContextPointer((void*)(&(ret.first)->first));
+        ret->second->setContextPointer((void*)(&ret->first));
         noOfInterfaces[cacheIndex]++;
         EV<<"name interface list insertion complete"<<endl;
     } else if(instructionStatus == hTable->UPDATE_NAME){
