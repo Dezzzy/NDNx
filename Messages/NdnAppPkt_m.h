@@ -22,7 +22,7 @@
 /**
  * Class generated from <tt>NDNx/Messages/NdnAppPkt.msg</tt> by opp_msgc.
  * <pre>
- * packet NdnApplPkt extends ApplPkt {
+ * packet NdnAppPkt extends ApplPkt {
  *     
  *     	int maxNbHops;
  *     	int nbHops;
@@ -69,7 +69,7 @@
  * }
  * </pre>
  */
-class NdnApplPkt : public ::ApplPkt
+class NdnAppPkt : public ::ApplPkt
 {
   protected:
     int maxNbHops_var;
@@ -103,18 +103,18 @@ class NdnApplPkt : public ::ApplPkt
     unsigned int thCsBFM4_var;
 
   private:
-    void copy(const NdnApplPkt& other);
+    void copy(const NdnAppPkt& other);
 
   protected:
     // protected and unimplemented operator==(), to prevent accidental usage
-    bool operator==(const NdnApplPkt&);
+    bool operator==(const NdnAppPkt&);
 
   public:
-    NdnApplPkt(const char *name=NULL, int kind=0);
-    NdnApplPkt(const NdnApplPkt& other);
-    virtual ~NdnApplPkt();
-    NdnApplPkt& operator=(const NdnApplPkt& other);
-    virtual NdnApplPkt *dup() const {return new NdnApplPkt(*this);}
+    NdnAppPkt(const char *name=NULL, int kind=0);
+    NdnAppPkt(const NdnAppPkt& other);
+    virtual ~NdnAppPkt();
+    NdnAppPkt& operator=(const NdnAppPkt& other);
+    virtual NdnAppPkt *dup() const {return new NdnAppPkt(*this);}
     virtual void parsimPack(cCommBuffer *b);
     virtual void parsimUnpack(cCommBuffer *b);
 
@@ -128,7 +128,7 @@ class NdnApplPkt : public ::ApplPkt
     virtual int getIsExtendedPkt() const;
     virtual void setIsExtendedPkt(int isExtendedPkt);
     virtual LAddress::L3Type& getCreatorAddr();
-    virtual const LAddress::L3Type& getCreatorAddr() const {return const_cast<NdnApplPkt*>(this)->getCreatorAddr();}
+    virtual const LAddress::L3Type& getCreatorAddr() const {return const_cast<NdnAppPkt*>(this)->getCreatorAddr();}
     virtual void setCreatorAddr(const LAddress::L3Type& creatorAddr);
     virtual unsigned int getSelfPitBFM1() const;
     virtual void setSelfPitBFM1(unsigned int selfPitBFM1);
@@ -180,8 +180,8 @@ class NdnApplPkt : public ::ApplPkt
     virtual void setThCsBFM4(unsigned int thCsBFM4);
 };
 
-inline void doPacking(cCommBuffer *b, NdnApplPkt& obj) {obj.parsimPack(b);}
-inline void doUnpacking(cCommBuffer *b, NdnApplPkt& obj) {obj.parsimUnpack(b);}
+inline void doPacking(cCommBuffer *b, NdnAppPkt& obj) {obj.parsimPack(b);}
+inline void doUnpacking(cCommBuffer *b, NdnAppPkt& obj) {obj.parsimUnpack(b);}
 
 
 #endif // _NDNAPPPKT_M_H_

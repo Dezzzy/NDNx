@@ -82,7 +82,7 @@ void CacheDaemon::handleSelfMsg(cMessage* msg)
 
 int CacheDaemon::processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int hopCount)
 {
-    //Enter_Method_Silent("processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int hopCount)");
+    Enter_Method_Silent("processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int hopCount)");
     int instructionStatus;
     int applicationInstruction;
 
@@ -105,7 +105,7 @@ int CacheDaemon::processInterest(const char* name, LAddress::L3Type reqAddr, LAd
 
 int CacheDaemon::generateInterestEntry(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr)
 {
-    //Enter_Method_Silent("generateInterestEntry(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr)");
+    Enter_Method_Silent("generateInterestEntry(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr)");
     int instructionStatus;
     int applicationInstruction;
     instructionStatus = Cs->retreiveContentStore(name);

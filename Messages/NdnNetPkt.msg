@@ -19,7 +19,7 @@ cplusplus {{
 class NetwPkt;
 class LAddress::L3Type extends void;
 
-packet NdnNetwPkt extends NetwPkt {
+packet NdnNetPkt extends NetwPkt {
         LAddress::L3Type creatorAddr;
         unsigned int pitBloomFilterMap1;
         unsigned int pitBloomFilterMap2;

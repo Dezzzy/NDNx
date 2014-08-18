@@ -18,7 +18,7 @@
 
 #include <omnetpp.h>
 #include "NdnDaemon.h"
-//#include "NdnApplPkt_m.h"
+#include "NdnAppPkt_m.h"
 #include "BaseApplLayer.h"
 #include "CacheDaemon.h"
 
@@ -30,7 +30,7 @@
 #define SHORT_HOP 1
 #define LONG_HOP 6
 
-//class NdnApplPkt;
+class NdnAppPkt;
 
 class NdnApplLayer : public BaseApplLayer
 {
@@ -65,34 +65,33 @@ protected:
     simtime_t pktTTL;
     cMessage* startMsg;
     cMessage* broadcastTimer;
-    NdnDaemon::ndStore* store;
     const char* NodeType;
     const char* TargetWord;
     MsgIdSet KnownMsgs;
     SentMsgs InterestMsgs;
 
     virtual void handleSelfMsg(cMessage* msg);
-    virtual void handleLowerMsg(cMessage *msg);
+    virtual void handleLowerMsg(NdnAppPkt *msg);
     virtual void handleLowerControl(cMessage *msg){
         error("no lower control");
     }
     virtual void handleUpperMsg(cMessage* msg){
-        error("BaseNetwLayer does not handle control messages");
+        error("NdnApplLayer does not handle control messages");
     };
     virtual void handleUpperControl(cMessage* msg){
-        error("BaseNetwLayer does not handle control messages");
+        error("NdnApplLayer does not handle control messages");
     };
 
-/*
+
     void sendNextMsg(const char* name, int pktType, LAddress::L3Type pktCreator,LAddress::L3Type destAddr, int propagationDistance, int hopNum,int msgId);
-    void sendNextMsg(NdnApplPkt* pkt, LAddress::L3Type dAddr);
+    void sendNextMsg(NdnAppPkt* pkt, LAddress::L3Type dAddr);
     void generateInterestPkt(const char* name);
     void generateDataPkt(const char* name,LAddress::L3Type destAddr, int hopDistance);
-    void processInterestPkt(NdnApplPkt* pkt);
-    void processDataPkt(NdnApplPkt* pkt);
-    void ProcessMapData(NdnApplPkt* msg);
-    void GenerateMapData(NdnApplPkt* msg);
-*/
+    void processInterestPkt(NdnAppPkt* pkt);
+    void processDataPkt(NdnAppPkt* pkt);
+    void ProcessMapData(NdnAppPkt* msg);
+    void GenerateMapData(NdnAppPkt* msg);
+
     bool isKnownMsg(int msgId);
     void popMsgInterestQueue(cMessage* msg);
     void deleteMsgInterestQueue(const char* name);

@@ -41,10 +41,9 @@ void NdnApplLayer::initialize(int stage)
     }
 }
 
-void NdnApplLayer::handleLowerMsg(cMessage* msg)
+void NdnApplLayer::handleLowerMsg(NdnAppPkt* msg)
 {
-    /*
-    //NdnApplPkt* m = static_cast<NdnApplPkt*>(msg);
+    NdnAppPkt* m = static_cast<NdnAppPkt*>(msg);
     if(isKnownMsg(m->getMsgId())){
         delete(m);
     }  else if(m->getDestAddr() != LAddress::L3BROADCAST || m->getDestAddr() != myApplAddr()){
@@ -58,7 +57,6 @@ void NdnApplLayer::handleLowerMsg(cMessage* msg)
             processDataPkt(m);
         }
     }
-    */
 }
 
 void NdnApplLayer::handleSelfMsg(cMessage* msg)
@@ -80,10 +78,11 @@ void NdnApplLayer::handleSelfMsg(cMessage* msg)
 /*
 * sendNextMsg(...) generates the given type, this is the generic method used to set each field of the 
 * Application Packet. 
+*/
 
 void NdnApplLayer::sendNextMsg(const char* name, int pktType, LAddress::L3Type pktCreator,LAddress::L3Type destAddr, int propagationDistance, int hopNum, int msgId)
 {
-    NdnApplPkt* pkt = new NdnApplPkt(name, pktType);
+    NdnAppPkt* pkt = new NdnAppPkt(name, pktType);
     pkt->setMaxNbHops(propagationDistance);
     pkt->setNbHops(hopNum);
     pkt->setCreatorAddr(pktCreator);
@@ -100,18 +99,18 @@ void NdnApplLayer::sendNextMsg(const char* name, int pktType, LAddress::L3Type p
 
 }
 
-
-* sendNextMsg(NdnApplPkt* pkt, LAddress::L3Type dAddr):
+/*
+* sendNextMsg(NdnAppPkt* pkt, LAddress::L3Type dAddr):
 * This is a replication of the generic sendNextMsg Method.
 * However the new destination address is added and all hop numbers are incremented or changed to the 
 * appropriate values
+*/
 
-
-void NdnApplLayer::sendNextMsg(NdnApplPkt* pkt, LAddress::L3Type dAddr)
+void NdnApplLayer::sendNextMsg(NdnAppPkt* pkt, LAddress::L3Type dAddr)
 {
-    NdnApplPkt* m;
-    m = static_cast<NdnApplPkt*>(pkt->dup());
-    //NdnApplPkt* m = new NdnApplPkt(pkt->getName(),pkt->getKind());
+    NdnAppPkt* m;
+    m = static_cast<NdnAppPkt*>(pkt->dup());
+    //NdnAppPkt* m = new NdnAppPkt(pkt->getName(),pkt->getKind());
     m->setNbHops(pkt->getNbHops()+1);
     m->setDestAddr(dAddr);
     GenerateMapData(m);
@@ -119,12 +118,12 @@ void NdnApplLayer::sendNextMsg(NdnApplPkt* pkt, LAddress::L3Type dAddr)
     sendDown(m);
 }
 
-
+/*
 * generateInterestPkt(const char* name):
 * This is method used to generate new interest packets in conjunction with sendNextMsg
 * The interest is inserted into the Pending Interest Table with given name and 
 * the sent
-
+*/
 void NdnApplLayer::generateInterestPkt(const char* name)
 {
     int instructionStatus = 0;
@@ -146,11 +145,11 @@ void NdnApplLayer::generateInterestPkt(const char* name)
     }
 }
 
-
+/*
 * generateDataPkt(const char*,LAddress::L3Type, int hopDistance):
 * THIS FUNCTION NEEDS ATTENTION!!!!
 * This function generates a data packet and inserts it into the Content Store
-
+*/
 void NdnApplLayer::generateDataPkt(const char* name,LAddress::L3Type destAddr, int hopDistance)
 {
     int msgId = uniform(0,1000);
@@ -160,13 +159,13 @@ void NdnApplLayer::generateDataPkt(const char* name,LAddress::L3Type destAddr, i
     sendNextMsg(name, BASE_NDN_DATA_MESSAGE,myApplAddr(),destAddr,hopDistance,0,msgId);
 }
 
-
-* processInterestPkt(NdnApplPkt*):
+/*
+* processInterestPkt(NdnAppPkt*):
 * This functions processes the interest packet and completes the necessary functions based on responses 
 * the Pending Interest Table and Content Store
 * For full Methodology, see Name Data Protocol Documentation
-
-void NdnApplLayer::processInterestPkt(NdnApplPkt* pkt)
+*/
+void NdnApplLayer::processInterestPkt(NdnAppPkt* pkt)
 {
     int instructionStatus;
     int nbHops;
@@ -208,22 +207,22 @@ void NdnApplLayer::processInterestPkt(NdnApplPkt* pkt)
 }
 
 
-
-* processDataPkt(NdnApplPkt*):
+/*
+* processDataPkt(NdnAppPkt*):
 * Similar to processInterestPkt, for data packets only
 * see protocol documentation for full description
-
-void NdnApplLayer::processDataPkt(NdnApplPkt* pkt)
+*/
+void NdnApplLayer::processDataPkt(NdnAppPkt* pkt)
 {
     int instructionStatus;
     int nbHops;
     int msgId;
-    int* hCount;
+    int* hCount = 0;
     LAddress::L3Type* iAddr = new LAddress::L3Type;
     *iAddr = LAddress::L3NULL;
 
     nbHops = pkt->getNbHops() + 1;
-    instructionStatus = cDaemon->processData(pkt->getName(),hCount,iAddr );
+    instructionStatus = cDaemon->processData(pkt->getName(),hCount,iAddr);
     if(instructionStatus == CacheDaemon::SEND_DATA || instructionStatus == CacheDaemon::SEND_DATA_INTEREST_FOUND){
         if(nbHops < pkt->getMaxNbHops()){
             int minMax;
@@ -240,12 +239,12 @@ void NdnApplLayer::processDataPkt(NdnApplPkt* pkt)
     }
 }
 
-
-* processMapData(NdnApplPkt*):
+/*
+* processMapData(NdnAppPkt*):
 * This function strips incoming packets of the attached name and name space data, which is used in 
 * mapping the used name space in the network.
-
-void NdnApplLayer::ProcessMapData(NdnApplPkt* msg)
+*/
+void NdnApplLayer::ProcessMapData(NdnAppPkt* msg)
 {
     uint32_t** oneHopList;
     uint32_t** twoHopList;
@@ -304,12 +303,12 @@ void NdnApplLayer::ProcessMapData(NdnApplPkt* msg)
     cDaemon->updateForwardingInfoBase(msg->getSrcAddr(), oneHopList, twoHopList, threeHopList,xHopList);
 }
 
-
-* GenerateMapData(NdnApplPkt*):
+/*
+* GenerateMapData(NdnAppPkt*):
 * Generates the map data needed to sent along the interest/data packet
 * The data is generated and attached to the packet and then sent out
-
-void NdnApplLayer::GenerateMapData(NdnApplPkt* msg)
+*/
+void NdnApplLayer::GenerateMapData(NdnAppPkt* msg)
 {
     uint32_t** oneHopList;
     uint32_t** twoHopList;

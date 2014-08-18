@@ -22,7 +22,7 @@
 /**
  * Class generated from <tt>NDNx/Messages/NdnNetPkt.msg</tt> by opp_msgc.
  * <pre>
- * packet NdnNetwPkt extends NetwPkt {
+ * packet NdnNetPkt extends NetwPkt {
  *         LAddress::L3Type creatorAddr;
  *         unsigned int pitBloomFilterMap1;
  *         unsigned int pitBloomFilterMap2;
@@ -36,7 +36,7 @@
  * }
  * </pre>
  */
-class NdnNetwPkt : public ::NetwPkt
+class NdnNetPkt : public ::NetwPkt
 {
   protected:
     LAddress::L3Type creatorAddr_var;
@@ -50,24 +50,24 @@ class NdnNetwPkt : public ::NetwPkt
     unsigned int csBloomFilterMap4_var;
 
   private:
-    void copy(const NdnNetwPkt& other);
+    void copy(const NdnNetPkt& other);
 
   protected:
     // protected and unimplemented operator==(), to prevent accidental usage
-    bool operator==(const NdnNetwPkt&);
+    bool operator==(const NdnNetPkt&);
 
   public:
-    NdnNetwPkt(const char *name=NULL, int kind=0);
-    NdnNetwPkt(const NdnNetwPkt& other);
-    virtual ~NdnNetwPkt();
-    NdnNetwPkt& operator=(const NdnNetwPkt& other);
-    virtual NdnNetwPkt *dup() const {return new NdnNetwPkt(*this);}
+    NdnNetPkt(const char *name=NULL, int kind=0);
+    NdnNetPkt(const NdnNetPkt& other);
+    virtual ~NdnNetPkt();
+    NdnNetPkt& operator=(const NdnNetPkt& other);
+    virtual NdnNetPkt *dup() const {return new NdnNetPkt(*this);}
     virtual void parsimPack(cCommBuffer *b);
     virtual void parsimUnpack(cCommBuffer *b);
 
     // field getter/setter methods
     virtual LAddress::L3Type& getCreatorAddr();
-    virtual const LAddress::L3Type& getCreatorAddr() const {return const_cast<NdnNetwPkt*>(this)->getCreatorAddr();}
+    virtual const LAddress::L3Type& getCreatorAddr() const {return const_cast<NdnNetPkt*>(this)->getCreatorAddr();}
     virtual void setCreatorAddr(const LAddress::L3Type& creatorAddr);
     virtual unsigned int getPitBloomFilterMap1() const;
     virtual void setPitBloomFilterMap1(unsigned int pitBloomFilterMap1);
@@ -87,8 +87,8 @@ class NdnNetwPkt : public ::NetwPkt
     virtual void setCsBloomFilterMap4(unsigned int csBloomFilterMap4);
 };
 
-inline void doPacking(cCommBuffer *b, NdnNetwPkt& obj) {obj.parsimPack(b);}
-inline void doUnpacking(cCommBuffer *b, NdnNetwPkt& obj) {obj.parsimUnpack(b);}
+inline void doPacking(cCommBuffer *b, NdnNetPkt& obj) {obj.parsimPack(b);}
+inline void doUnpacking(cCommBuffer *b, NdnNetPkt& obj) {obj.parsimUnpack(b);}
 
 
 #endif // _NDNNETPKT_M_H_

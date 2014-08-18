@@ -19,7 +19,7 @@ cplusplus {{
 class ApplPkt;
 class LAddress::L3Type extends void;
 
-packet NdnApplPkt extends ApplPkt {
+packet NdnAppPkt extends ApplPkt {
     
     	int maxNbHops;
     	int nbHops;

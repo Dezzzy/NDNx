@@ -53,9 +53,9 @@ inline std::ostream& operator<<(std::ostream& out, const std::vector<T,A>& vec)
 template<typename T>
 inline std::ostream& operator<<(std::ostream& out,const T&) {return out;}
 
-Register_Class(NdnNetwPkt);
+Register_Class(NdnNetPkt);
 
-NdnNetwPkt::NdnNetwPkt(const char *name, int kind) : ::NetwPkt(name,kind)
+NdnNetPkt::NdnNetPkt(const char *name, int kind) : ::NetwPkt(name,kind)
 {
     this->pitBloomFilterMap1_var = 0;
     this->pitBloomFilterMap2_var = 0;
@@ -67,16 +67,16 @@ NdnNetwPkt::NdnNetwPkt(const char *name, int kind) : ::NetwPkt(name,kind)
     this->csBloomFilterMap4_var = 0;
 }
 
-NdnNetwPkt::NdnNetwPkt(const NdnNetwPkt& other) : ::NetwPkt(other)
+NdnNetPkt::NdnNetPkt(const NdnNetPkt& other) : ::NetwPkt(other)
 {
     copy(other);
 }
 
-NdnNetwPkt::~NdnNetwPkt()
+NdnNetPkt::~NdnNetPkt()
 {
 }
 
-NdnNetwPkt& NdnNetwPkt::operator=(const NdnNetwPkt& other)
+NdnNetPkt& NdnNetPkt::operator=(const NdnNetPkt& other)
 {
     if (this==&other) return *this;
     ::NetwPkt::operator=(other);
@@ -84,7 +84,7 @@ NdnNetwPkt& NdnNetwPkt::operator=(const NdnNetwPkt& other)
     return *this;
 }
 
-void NdnNetwPkt::copy(const NdnNetwPkt& other)
+void NdnNetPkt::copy(const NdnNetPkt& other)
 {
     this->creatorAddr_var = other.creatorAddr_var;
     this->pitBloomFilterMap1_var = other.pitBloomFilterMap1_var;
@@ -97,7 +97,7 @@ void NdnNetwPkt::copy(const NdnNetwPkt& other)
     this->csBloomFilterMap4_var = other.csBloomFilterMap4_var;
 }
 
-void NdnNetwPkt::parsimPack(cCommBuffer *b)
+void NdnNetPkt::parsimPack(cCommBuffer *b)
 {
     ::NetwPkt::parsimPack(b);
     doPacking(b,this->creatorAddr_var);
@@ -111,7 +111,7 @@ void NdnNetwPkt::parsimPack(cCommBuffer *b)
     doPacking(b,this->csBloomFilterMap4_var);
 }
 
-void NdnNetwPkt::parsimUnpack(cCommBuffer *b)
+void NdnNetPkt::parsimUnpack(cCommBuffer *b)
 {
     ::NetwPkt::parsimUnpack(b);
     doUnpacking(b,this->creatorAddr_var);
@@ -125,101 +125,101 @@ void NdnNetwPkt::parsimUnpack(cCommBuffer *b)
     doUnpacking(b,this->csBloomFilterMap4_var);
 }
 
-LAddress::L3Type& NdnNetwPkt::getCreatorAddr()
+LAddress::L3Type& NdnNetPkt::getCreatorAddr()
 {
     return creatorAddr_var;
 }
 
-void NdnNetwPkt::setCreatorAddr(const LAddress::L3Type& creatorAddr)
+void NdnNetPkt::setCreatorAddr(const LAddress::L3Type& creatorAddr)
 {
     this->creatorAddr_var = creatorAddr;
 }
 
-unsigned int NdnNetwPkt::getPitBloomFilterMap1() const
+unsigned int NdnNetPkt::getPitBloomFilterMap1() const
 {
     return pitBloomFilterMap1_var;
 }
 
-void NdnNetwPkt::setPitBloomFilterMap1(unsigned int pitBloomFilterMap1)
+void NdnNetPkt::setPitBloomFilterMap1(unsigned int pitBloomFilterMap1)
 {
     this->pitBloomFilterMap1_var = pitBloomFilterMap1;
 }
 
-unsigned int NdnNetwPkt::getPitBloomFilterMap2() const
+unsigned int NdnNetPkt::getPitBloomFilterMap2() const
 {
     return pitBloomFilterMap2_var;
 }
 
-void NdnNetwPkt::setPitBloomFilterMap2(unsigned int pitBloomFilterMap2)
+void NdnNetPkt::setPitBloomFilterMap2(unsigned int pitBloomFilterMap2)
 {
     this->pitBloomFilterMap2_var = pitBloomFilterMap2;
 }
 
-unsigned int NdnNetwPkt::getPitBloomFilterMap3() const
+unsigned int NdnNetPkt::getPitBloomFilterMap3() const
 {
     return pitBloomFilterMap3_var;
 }
 
-void NdnNetwPkt::setPitBloomFilterMap3(unsigned int pitBloomFilterMap3)
+void NdnNetPkt::setPitBloomFilterMap3(unsigned int pitBloomFilterMap3)
 {
     this->pitBloomFilterMap3_var = pitBloomFilterMap3;
 }
 
-unsigned int NdnNetwPkt::getPitBloomFilterMap4() const
+unsigned int NdnNetPkt::getPitBloomFilterMap4() const
 {
     return pitBloomFilterMap4_var;
 }
 
-void NdnNetwPkt::setPitBloomFilterMap4(unsigned int pitBloomFilterMap4)
+void NdnNetPkt::setPitBloomFilterMap4(unsigned int pitBloomFilterMap4)
 {
     this->pitBloomFilterMap4_var = pitBloomFilterMap4;
 }
 
-unsigned int NdnNetwPkt::getCsBloomFilterMap1() const
+unsigned int NdnNetPkt::getCsBloomFilterMap1() const
 {
     return csBloomFilterMap1_var;
 }
 
-void NdnNetwPkt::setCsBloomFilterMap1(unsigned int csBloomFilterMap1)
+void NdnNetPkt::setCsBloomFilterMap1(unsigned int csBloomFilterMap1)
 {
     this->csBloomFilterMap1_var = csBloomFilterMap1;
 }
 
-unsigned int NdnNetwPkt::getCsBloomFilterMap2() const
+unsigned int NdnNetPkt::getCsBloomFilterMap2() const
 {
     return csBloomFilterMap2_var;
 }
 
-void NdnNetwPkt::setCsBloomFilterMap2(unsigned int csBloomFilterMap2)
+void NdnNetPkt::setCsBloomFilterMap2(unsigned int csBloomFilterMap2)
 {
     this->csBloomFilterMap2_var = csBloomFilterMap2;
 }
 
-unsigned int NdnNetwPkt::getCsBloomFilterMap3() const
+unsigned int NdnNetPkt::getCsBloomFilterMap3() const
 {
     return csBloomFilterMap3_var;
 }
 
-void NdnNetwPkt::setCsBloomFilterMap3(unsigned int csBloomFilterMap3)
+void NdnNetPkt::setCsBloomFilterMap3(unsigned int csBloomFilterMap3)
 {
     this->csBloomFilterMap3_var = csBloomFilterMap3;
 }
 
-unsigned int NdnNetwPkt::getCsBloomFilterMap4() const
+unsigned int NdnNetPkt::getCsBloomFilterMap4() const
 {
     return csBloomFilterMap4_var;
 }
 
-void NdnNetwPkt::setCsBloomFilterMap4(unsigned int csBloomFilterMap4)
+void NdnNetPkt::setCsBloomFilterMap4(unsigned int csBloomFilterMap4)
 {
     this->csBloomFilterMap4_var = csBloomFilterMap4;
 }
 
-class NdnNetwPktDescriptor : public cClassDescriptor
+class NdnNetPktDescriptor : public cClassDescriptor
 {
   public:
-    NdnNetwPktDescriptor();
-    virtual ~NdnNetwPktDescriptor();
+    NdnNetPktDescriptor();
+    virtual ~NdnNetPktDescriptor();
 
     virtual bool doesSupport(cObject *obj) const;
     virtual const char *getProperty(const char *propertyname) const;
@@ -238,34 +238,34 @@ class NdnNetwPktDescriptor : public cClassDescriptor
     virtual void *getFieldStructPointer(void *object, int field, int i) const;
 };
 
-Register_ClassDescriptor(NdnNetwPktDescriptor);
+Register_ClassDescriptor(NdnNetPktDescriptor);
 
-NdnNetwPktDescriptor::NdnNetwPktDescriptor() : cClassDescriptor("NdnNetwPkt", "NetwPkt")
+NdnNetPktDescriptor::NdnNetPktDescriptor() : cClassDescriptor("NdnNetPkt", "NetwPkt")
 {
 }
 
-NdnNetwPktDescriptor::~NdnNetwPktDescriptor()
+NdnNetPktDescriptor::~NdnNetPktDescriptor()
 {
 }
 
-bool NdnNetwPktDescriptor::doesSupport(cObject *obj) const
+bool NdnNetPktDescriptor::doesSupport(cObject *obj) const
 {
-    return dynamic_cast<NdnNetwPkt *>(obj)!=NULL;
+    return dynamic_cast<NdnNetPkt *>(obj)!=NULL;
 }
 
-const char *NdnNetwPktDescriptor::getProperty(const char *propertyname) const
+const char *NdnNetPktDescriptor::getProperty(const char *propertyname) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     return basedesc ? basedesc->getProperty(propertyname) : NULL;
 }
 
-int NdnNetwPktDescriptor::getFieldCount(void *object) const
+int NdnNetPktDescriptor::getFieldCount(void *object) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     return basedesc ? 9+basedesc->getFieldCount(object) : 9;
 }
 
-unsigned int NdnNetwPktDescriptor::getFieldTypeFlags(void *object, int field) const
+unsigned int NdnNetPktDescriptor::getFieldTypeFlags(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -287,7 +287,7 @@ unsigned int NdnNetwPktDescriptor::getFieldTypeFlags(void *object, int field) co
     return (field>=0 && field<9) ? fieldTypeFlags[field] : 0;
 }
 
-const char *NdnNetwPktDescriptor::getFieldName(void *object, int field) const
+const char *NdnNetPktDescriptor::getFieldName(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -309,7 +309,7 @@ const char *NdnNetwPktDescriptor::getFieldName(void *object, int field) const
     return (field>=0 && field<9) ? fieldNames[field] : NULL;
 }
 
-int NdnNetwPktDescriptor::findField(void *object, const char *fieldName) const
+int NdnNetPktDescriptor::findField(void *object, const char *fieldName) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     int base = basedesc ? basedesc->getFieldCount(object) : 0;
@@ -325,7 +325,7 @@ int NdnNetwPktDescriptor::findField(void *object, const char *fieldName) const
     return basedesc ? basedesc->findField(object, fieldName) : -1;
 }
 
-const char *NdnNetwPktDescriptor::getFieldTypeString(void *object, int field) const
+const char *NdnNetPktDescriptor::getFieldTypeString(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -347,7 +347,7 @@ const char *NdnNetwPktDescriptor::getFieldTypeString(void *object, int field) co
     return (field>=0 && field<9) ? fieldTypeStrings[field] : NULL;
 }
 
-const char *NdnNetwPktDescriptor::getFieldProperty(void *object, int field, const char *propertyname) const
+const char *NdnNetPktDescriptor::getFieldProperty(void *object, int field, const char *propertyname) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -360,7 +360,7 @@ const char *NdnNetwPktDescriptor::getFieldProperty(void *object, int field, cons
     }
 }
 
-int NdnNetwPktDescriptor::getArraySize(void *object, int field) const
+int NdnNetPktDescriptor::getArraySize(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -368,13 +368,13 @@ int NdnNetwPktDescriptor::getArraySize(void *object, int field) const
             return basedesc->getArraySize(object, field);
         field -= basedesc->getFieldCount(object);
     }
-    NdnNetwPkt *pp = (NdnNetwPkt *)object; (void)pp;
+    NdnNetPkt *pp = (NdnNetPkt *)object; (void)pp;
     switch (field) {
         default: return 0;
     }
 }
 
-std::string NdnNetwPktDescriptor::getFieldAsString(void *object, int field, int i) const
+std::string NdnNetPktDescriptor::getFieldAsString(void *object, int field, int i) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -382,7 +382,7 @@ std::string NdnNetwPktDescriptor::getFieldAsString(void *object, int field, int 
             return basedesc->getFieldAsString(object,field,i);
         field -= basedesc->getFieldCount(object);
     }
-    NdnNetwPkt *pp = (NdnNetwPkt *)object; (void)pp;
+    NdnNetPkt *pp = (NdnNetPkt *)object; (void)pp;
     switch (field) {
         case 0: {std::stringstream out; out << pp->getCreatorAddr(); return out.str();}
         case 1: return ulong2string(pp->getPitBloomFilterMap1());
@@ -397,7 +397,7 @@ std::string NdnNetwPktDescriptor::getFieldAsString(void *object, int field, int 
     }
 }
 
-bool NdnNetwPktDescriptor::setFieldAsString(void *object, int field, int i, const char *value) const
+bool NdnNetPktDescriptor::setFieldAsString(void *object, int field, int i, const char *value) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -405,7 +405,7 @@ bool NdnNetwPktDescriptor::setFieldAsString(void *object, int field, int i, cons
             return basedesc->setFieldAsString(object,field,i,value);
         field -= basedesc->getFieldCount(object);
     }
-    NdnNetwPkt *pp = (NdnNetwPkt *)object; (void)pp;
+    NdnNetPkt *pp = (NdnNetPkt *)object; (void)pp;
     switch (field) {
         case 1: pp->setPitBloomFilterMap1(string2ulong(value)); return true;
         case 2: pp->setPitBloomFilterMap2(string2ulong(value)); return true;
@@ -419,7 +419,7 @@ bool NdnNetwPktDescriptor::setFieldAsString(void *object, int field, int i, cons
     }
 }
 
-const char *NdnNetwPktDescriptor::getFieldStructName(void *object, int field) const
+const char *NdnNetPktDescriptor::getFieldStructName(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -433,7 +433,7 @@ const char *NdnNetwPktDescriptor::getFieldStructName(void *object, int field) co
     };
 }
 
-void *NdnNetwPktDescriptor::getFieldStructPointer(void *object, int field, int i) const
+void *NdnNetPktDescriptor::getFieldStructPointer(void *object, int field, int i) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -441,7 +441,7 @@ void *NdnNetwPktDescriptor::getFieldStructPointer(void *object, int field, int i
             return basedesc->getFieldStructPointer(object, field, i);
         field -= basedesc->getFieldCount(object);
     }
-    NdnNetwPkt *pp = (NdnNetwPkt *)object; (void)pp;
+    NdnNetPkt *pp = (NdnNetPkt *)object; (void)pp;
     switch (field) {
         case 0: return (void *)(&pp->getCreatorAddr()); break;
         default: return NULL;

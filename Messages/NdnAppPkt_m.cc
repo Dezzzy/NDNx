@@ -53,9 +53,9 @@ inline std::ostream& operator<<(std::ostream& out, const std::vector<T,A>& vec)
 template<typename T>
 inline std::ostream& operator<<(std::ostream& out,const T&) {return out;}
 
-Register_Class(NdnApplPkt);
+Register_Class(NdnAppPkt);
 
-NdnApplPkt::NdnApplPkt(const char *name, int kind) : ::ApplPkt(name,kind)
+NdnAppPkt::NdnAppPkt(const char *name, int kind) : ::ApplPkt(name,kind)
 {
     this->maxNbHops_var = 0;
     this->nbHops_var = 0;
@@ -87,16 +87,16 @@ NdnApplPkt::NdnApplPkt(const char *name, int kind) : ::ApplPkt(name,kind)
     this->thCsBFM4_var = 0;
 }
 
-NdnApplPkt::NdnApplPkt(const NdnApplPkt& other) : ::ApplPkt(other)
+NdnAppPkt::NdnAppPkt(const NdnAppPkt& other) : ::ApplPkt(other)
 {
     copy(other);
 }
 
-NdnApplPkt::~NdnApplPkt()
+NdnAppPkt::~NdnAppPkt()
 {
 }
 
-NdnApplPkt& NdnApplPkt::operator=(const NdnApplPkt& other)
+NdnAppPkt& NdnAppPkt::operator=(const NdnAppPkt& other)
 {
     if (this==&other) return *this;
     ::ApplPkt::operator=(other);
@@ -104,7 +104,7 @@ NdnApplPkt& NdnApplPkt::operator=(const NdnApplPkt& other)
     return *this;
 }
 
-void NdnApplPkt::copy(const NdnApplPkt& other)
+void NdnAppPkt::copy(const NdnAppPkt& other)
 {
     this->maxNbHops_var = other.maxNbHops_var;
     this->nbHops_var = other.nbHops_var;
@@ -137,7 +137,7 @@ void NdnApplPkt::copy(const NdnApplPkt& other)
     this->thCsBFM4_var = other.thCsBFM4_var;
 }
 
-void NdnApplPkt::parsimPack(cCommBuffer *b)
+void NdnAppPkt::parsimPack(cCommBuffer *b)
 {
     ::ApplPkt::parsimPack(b);
     doPacking(b,this->maxNbHops_var);
@@ -171,7 +171,7 @@ void NdnApplPkt::parsimPack(cCommBuffer *b)
     doPacking(b,this->thCsBFM4_var);
 }
 
-void NdnApplPkt::parsimUnpack(cCommBuffer *b)
+void NdnAppPkt::parsimUnpack(cCommBuffer *b)
 {
     ::ApplPkt::parsimUnpack(b);
     doUnpacking(b,this->maxNbHops_var);
@@ -205,301 +205,301 @@ void NdnApplPkt::parsimUnpack(cCommBuffer *b)
     doUnpacking(b,this->thCsBFM4_var);
 }
 
-int NdnApplPkt::getMaxNbHops() const
+int NdnAppPkt::getMaxNbHops() const
 {
     return maxNbHops_var;
 }
 
-void NdnApplPkt::setMaxNbHops(int maxNbHops)
+void NdnAppPkt::setMaxNbHops(int maxNbHops)
 {
     this->maxNbHops_var = maxNbHops;
 }
 
-int NdnApplPkt::getNbHops() const
+int NdnAppPkt::getNbHops() const
 {
     return nbHops_var;
 }
 
-void NdnApplPkt::setNbHops(int nbHops)
+void NdnAppPkt::setNbHops(int nbHops)
 {
     this->nbHops_var = nbHops;
 }
 
-int NdnApplPkt::getMsgId() const
+int NdnAppPkt::getMsgId() const
 {
     return msgId_var;
 }
 
-void NdnApplPkt::setMsgId(int msgId)
+void NdnAppPkt::setMsgId(int msgId)
 {
     this->msgId_var = msgId;
 }
 
-int NdnApplPkt::getIsExtendedPkt() const
+int NdnAppPkt::getIsExtendedPkt() const
 {
     return isExtendedPkt_var;
 }
 
-void NdnApplPkt::setIsExtendedPkt(int isExtendedPkt)
+void NdnAppPkt::setIsExtendedPkt(int isExtendedPkt)
 {
     this->isExtendedPkt_var = isExtendedPkt;
 }
 
-LAddress::L3Type& NdnApplPkt::getCreatorAddr()
+LAddress::L3Type& NdnAppPkt::getCreatorAddr()
 {
     return creatorAddr_var;
 }
 
-void NdnApplPkt::setCreatorAddr(const LAddress::L3Type& creatorAddr)
+void NdnAppPkt::setCreatorAddr(const LAddress::L3Type& creatorAddr)
 {
     this->creatorAddr_var = creatorAddr;
 }
 
-unsigned int NdnApplPkt::getSelfPitBFM1() const
+unsigned int NdnAppPkt::getSelfPitBFM1() const
 {
     return selfPitBFM1_var;
 }
 
-void NdnApplPkt::setSelfPitBFM1(unsigned int selfPitBFM1)
+void NdnAppPkt::setSelfPitBFM1(unsigned int selfPitBFM1)
 {
     this->selfPitBFM1_var = selfPitBFM1;
 }
 
-unsigned int NdnApplPkt::getSelfPitBFM2() const
+unsigned int NdnAppPkt::getSelfPitBFM2() const
 {
     return selfPitBFM2_var;
 }
 
-void NdnApplPkt::setSelfPitBFM2(unsigned int selfPitBFM2)
+void NdnAppPkt::setSelfPitBFM2(unsigned int selfPitBFM2)
 {
     this->selfPitBFM2_var = selfPitBFM2;
 }
 
-unsigned int NdnApplPkt::getSelfPitBFM3() const
+unsigned int NdnAppPkt::getSelfPitBFM3() const
 {
     return selfPitBFM3_var;
 }
 
-void NdnApplPkt::setSelfPitBFM3(unsigned int selfPitBFM3)
+void NdnAppPkt::setSelfPitBFM3(unsigned int selfPitBFM3)
 {
     this->selfPitBFM3_var = selfPitBFM3;
 }
 
-unsigned int NdnApplPkt::getSelfPitBFM4() const
+unsigned int NdnAppPkt::getSelfPitBFM4() const
 {
     return selfPitBFM4_var;
 }
 
-void NdnApplPkt::setSelfPitBFM4(unsigned int selfPitBFM4)
+void NdnAppPkt::setSelfPitBFM4(unsigned int selfPitBFM4)
 {
     this->selfPitBFM4_var = selfPitBFM4;
 }
 
-unsigned int NdnApplPkt::getSelfCsBFM1() const
+unsigned int NdnAppPkt::getSelfCsBFM1() const
 {
     return selfCsBFM1_var;
 }
 
-void NdnApplPkt::setSelfCsBFM1(unsigned int selfCsBFM1)
+void NdnAppPkt::setSelfCsBFM1(unsigned int selfCsBFM1)
 {
     this->selfCsBFM1_var = selfCsBFM1;
 }
 
-unsigned int NdnApplPkt::getSelfCsBFM2() const
+unsigned int NdnAppPkt::getSelfCsBFM2() const
 {
     return selfCsBFM2_var;
 }
 
-void NdnApplPkt::setSelfCsBFM2(unsigned int selfCsBFM2)
+void NdnAppPkt::setSelfCsBFM2(unsigned int selfCsBFM2)
 {
     this->selfCsBFM2_var = selfCsBFM2;
 }
 
-unsigned int NdnApplPkt::getSelfCsBFM3() const
+unsigned int NdnAppPkt::getSelfCsBFM3() const
 {
     return selfCsBFM3_var;
 }
 
-void NdnApplPkt::setSelfCsBFM3(unsigned int selfCsBFM3)
+void NdnAppPkt::setSelfCsBFM3(unsigned int selfCsBFM3)
 {
     this->selfCsBFM3_var = selfCsBFM3;
 }
 
-unsigned int NdnApplPkt::getSelfCsBFM4() const
+unsigned int NdnAppPkt::getSelfCsBFM4() const
 {
     return selfCsBFM4_var;
 }
 
-void NdnApplPkt::setSelfCsBFM4(unsigned int selfCsBFM4)
+void NdnAppPkt::setSelfCsBFM4(unsigned int selfCsBFM4)
 {
     this->selfCsBFM4_var = selfCsBFM4;
 }
 
-unsigned int NdnApplPkt::getOhPitBFM1() const
+unsigned int NdnAppPkt::getOhPitBFM1() const
 {
     return ohPitBFM1_var;
 }
 
-void NdnApplPkt::setOhPitBFM1(unsigned int ohPitBFM1)
+void NdnAppPkt::setOhPitBFM1(unsigned int ohPitBFM1)
 {
     this->ohPitBFM1_var = ohPitBFM1;
 }
 
-unsigned int NdnApplPkt::getOhPitBFM2() const
+unsigned int NdnAppPkt::getOhPitBFM2() const
 {
     return ohPitBFM2_var;
 }
 
-void NdnApplPkt::setOhPitBFM2(unsigned int ohPitBFM2)
+void NdnAppPkt::setOhPitBFM2(unsigned int ohPitBFM2)
 {
     this->ohPitBFM2_var = ohPitBFM2;
 }
 
-unsigned int NdnApplPkt::getOhPitBFM3() const
+unsigned int NdnAppPkt::getOhPitBFM3() const
 {
     return ohPitBFM3_var;
 }
 
-void NdnApplPkt::setOhPitBFM3(unsigned int ohPitBFM3)
+void NdnAppPkt::setOhPitBFM3(unsigned int ohPitBFM3)
 {
     this->ohPitBFM3_var = ohPitBFM3;
 }
 
-unsigned int NdnApplPkt::getOhPitBFM4() const
+unsigned int NdnAppPkt::getOhPitBFM4() const
 {
     return ohPitBFM4_var;
 }
 
-void NdnApplPkt::setOhPitBFM4(unsigned int ohPitBFM4)
+void NdnAppPkt::setOhPitBFM4(unsigned int ohPitBFM4)
 {
     this->ohPitBFM4_var = ohPitBFM4;
 }
 
-unsigned int NdnApplPkt::getOhCsBFM1() const
+unsigned int NdnAppPkt::getOhCsBFM1() const
 {
     return ohCsBFM1_var;
 }
 
-void NdnApplPkt::setOhCsBFM1(unsigned int ohCsBFM1)
+void NdnAppPkt::setOhCsBFM1(unsigned int ohCsBFM1)
 {
     this->ohCsBFM1_var = ohCsBFM1;
 }
 
-unsigned int NdnApplPkt::getOhCsBFM2() const
+unsigned int NdnAppPkt::getOhCsBFM2() const
 {
     return ohCsBFM2_var;
 }
 
-void NdnApplPkt::setOhCsBFM2(unsigned int ohCsBFM2)
+void NdnAppPkt::setOhCsBFM2(unsigned int ohCsBFM2)
 {
     this->ohCsBFM2_var = ohCsBFM2;
 }
 
-unsigned int NdnApplPkt::getOhCsBFM3() const
+unsigned int NdnAppPkt::getOhCsBFM3() const
 {
     return ohCsBFM3_var;
 }
 
-void NdnApplPkt::setOhCsBFM3(unsigned int ohCsBFM3)
+void NdnAppPkt::setOhCsBFM3(unsigned int ohCsBFM3)
 {
     this->ohCsBFM3_var = ohCsBFM3;
 }
 
-unsigned int NdnApplPkt::getOhCsBFM4() const
+unsigned int NdnAppPkt::getOhCsBFM4() const
 {
     return ohCsBFM4_var;
 }
 
-void NdnApplPkt::setOhCsBFM4(unsigned int ohCsBFM4)
+void NdnAppPkt::setOhCsBFM4(unsigned int ohCsBFM4)
 {
     this->ohCsBFM4_var = ohCsBFM4;
 }
 
-unsigned int NdnApplPkt::getThPitBFM1() const
+unsigned int NdnAppPkt::getThPitBFM1() const
 {
     return thPitBFM1_var;
 }
 
-void NdnApplPkt::setThPitBFM1(unsigned int thPitBFM1)
+void NdnAppPkt::setThPitBFM1(unsigned int thPitBFM1)
 {
     this->thPitBFM1_var = thPitBFM1;
 }
 
-unsigned int NdnApplPkt::getThPitBFM2() const
+unsigned int NdnAppPkt::getThPitBFM2() const
 {
     return thPitBFM2_var;
 }
 
-void NdnApplPkt::setThPitBFM2(unsigned int thPitBFM2)
+void NdnAppPkt::setThPitBFM2(unsigned int thPitBFM2)
 {
     this->thPitBFM2_var = thPitBFM2;
 }
 
-unsigned int NdnApplPkt::getThPitBFM3() const
+unsigned int NdnAppPkt::getThPitBFM3() const
 {
     return thPitBFM3_var;
 }
 
-void NdnApplPkt::setThPitBFM3(unsigned int thPitBFM3)
+void NdnAppPkt::setThPitBFM3(unsigned int thPitBFM3)
 {
     this->thPitBFM3_var = thPitBFM3;
 }
 
-unsigned int NdnApplPkt::getThPitBFM4() const
+unsigned int NdnAppPkt::getThPitBFM4() const
 {
     return thPitBFM4_var;
 }
 
-void NdnApplPkt::setThPitBFM4(unsigned int thPitBFM4)
+void NdnAppPkt::setThPitBFM4(unsigned int thPitBFM4)
 {
     this->thPitBFM4_var = thPitBFM4;
 }
 
-unsigned int NdnApplPkt::getThCsBFM1() const
+unsigned int NdnAppPkt::getThCsBFM1() const
 {
     return thCsBFM1_var;
 }
 
-void NdnApplPkt::setThCsBFM1(unsigned int thCsBFM1)
+void NdnAppPkt::setThCsBFM1(unsigned int thCsBFM1)
 {
     this->thCsBFM1_var = thCsBFM1;
 }
 
-unsigned int NdnApplPkt::getThCsBFM2() const
+unsigned int NdnAppPkt::getThCsBFM2() const
 {
     return thCsBFM2_var;
 }
 
-void NdnApplPkt::setThCsBFM2(unsigned int thCsBFM2)
+void NdnAppPkt::setThCsBFM2(unsigned int thCsBFM2)
 {
     this->thCsBFM2_var = thCsBFM2;
 }
 
-unsigned int NdnApplPkt::getThCsBFM3() const
+unsigned int NdnAppPkt::getThCsBFM3() const
 {
     return thCsBFM3_var;
 }
 
-void NdnApplPkt::setThCsBFM3(unsigned int thCsBFM3)
+void NdnAppPkt::setThCsBFM3(unsigned int thCsBFM3)
 {
     this->thCsBFM3_var = thCsBFM3;
 }
 
-unsigned int NdnApplPkt::getThCsBFM4() const
+unsigned int NdnAppPkt::getThCsBFM4() const
 {
     return thCsBFM4_var;
 }
 
-void NdnApplPkt::setThCsBFM4(unsigned int thCsBFM4)
+void NdnAppPkt::setThCsBFM4(unsigned int thCsBFM4)
 {
     this->thCsBFM4_var = thCsBFM4;
 }
 
-class NdnApplPktDescriptor : public cClassDescriptor
+class NdnAppPktDescriptor : public cClassDescriptor
 {
   public:
-    NdnApplPktDescriptor();
-    virtual ~NdnApplPktDescriptor();
+    NdnAppPktDescriptor();
+    virtual ~NdnAppPktDescriptor();
 
     virtual bool doesSupport(cObject *obj) const;
     virtual const char *getProperty(const char *propertyname) const;
@@ -518,34 +518,34 @@ class NdnApplPktDescriptor : public cClassDescriptor
     virtual void *getFieldStructPointer(void *object, int field, int i) const;
 };
 
-Register_ClassDescriptor(NdnApplPktDescriptor);
+Register_ClassDescriptor(NdnAppPktDescriptor);
 
-NdnApplPktDescriptor::NdnApplPktDescriptor() : cClassDescriptor("NdnApplPkt", "ApplPkt")
+NdnAppPktDescriptor::NdnAppPktDescriptor() : cClassDescriptor("NdnAppPkt", "ApplPkt")
 {
 }
 
-NdnApplPktDescriptor::~NdnApplPktDescriptor()
+NdnAppPktDescriptor::~NdnAppPktDescriptor()
 {
 }
 
-bool NdnApplPktDescriptor::doesSupport(cObject *obj) const
+bool NdnAppPktDescriptor::doesSupport(cObject *obj) const
 {
-    return dynamic_cast<NdnApplPkt *>(obj)!=NULL;
+    return dynamic_cast<NdnAppPkt *>(obj)!=NULL;
 }
 
-const char *NdnApplPktDescriptor::getProperty(const char *propertyname) const
+const char *NdnAppPktDescriptor::getProperty(const char *propertyname) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     return basedesc ? basedesc->getProperty(propertyname) : NULL;
 }
 
-int NdnApplPktDescriptor::getFieldCount(void *object) const
+int NdnAppPktDescriptor::getFieldCount(void *object) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     return basedesc ? 29+basedesc->getFieldCount(object) : 29;
 }
 
-unsigned int NdnApplPktDescriptor::getFieldTypeFlags(void *object, int field) const
+unsigned int NdnAppPktDescriptor::getFieldTypeFlags(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -587,7 +587,7 @@ unsigned int NdnApplPktDescriptor::getFieldTypeFlags(void *object, int field) co
     return (field>=0 && field<29) ? fieldTypeFlags[field] : 0;
 }
 
-const char *NdnApplPktDescriptor::getFieldName(void *object, int field) const
+const char *NdnAppPktDescriptor::getFieldName(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -629,7 +629,7 @@ const char *NdnApplPktDescriptor::getFieldName(void *object, int field) const
     return (field>=0 && field<29) ? fieldNames[field] : NULL;
 }
 
-int NdnApplPktDescriptor::findField(void *object, const char *fieldName) const
+int NdnAppPktDescriptor::findField(void *object, const char *fieldName) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     int base = basedesc ? basedesc->getFieldCount(object) : 0;
@@ -665,7 +665,7 @@ int NdnApplPktDescriptor::findField(void *object, const char *fieldName) const
     return basedesc ? basedesc->findField(object, fieldName) : -1;
 }
 
-const char *NdnApplPktDescriptor::getFieldTypeString(void *object, int field) const
+const char *NdnAppPktDescriptor::getFieldTypeString(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -707,7 +707,7 @@ const char *NdnApplPktDescriptor::getFieldTypeString(void *object, int field) co
     return (field>=0 && field<29) ? fieldTypeStrings[field] : NULL;
 }
 
-const char *NdnApplPktDescriptor::getFieldProperty(void *object, int field, const char *propertyname) const
+const char *NdnAppPktDescriptor::getFieldProperty(void *object, int field, const char *propertyname) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -720,7 +720,7 @@ const char *NdnApplPktDescriptor::getFieldProperty(void *object, int field, cons
     }
 }
 
-int NdnApplPktDescriptor::getArraySize(void *object, int field) const
+int NdnAppPktDescriptor::getArraySize(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -728,13 +728,13 @@ int NdnApplPktDescriptor::getArraySize(void *object, int field) const
             return basedesc->getArraySize(object, field);
         field -= basedesc->getFieldCount(object);
     }
-    NdnApplPkt *pp = (NdnApplPkt *)object; (void)pp;
+    NdnAppPkt *pp = (NdnAppPkt *)object; (void)pp;
     switch (field) {
         default: return 0;
     }
 }
 
-std::string NdnApplPktDescriptor::getFieldAsString(void *object, int field, int i) const
+std::string NdnAppPktDescriptor::getFieldAsString(void *object, int field, int i) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -742,7 +742,7 @@ std::string NdnApplPktDescriptor::getFieldAsString(void *object, int field, int 
             return basedesc->getFieldAsString(object,field,i);
         field -= basedesc->getFieldCount(object);
     }
-    NdnApplPkt *pp = (NdnApplPkt *)object; (void)pp;
+    NdnAppPkt *pp = (NdnAppPkt *)object; (void)pp;
     switch (field) {
         case 0: return long2string(pp->getMaxNbHops());
         case 1: return long2string(pp->getNbHops());
@@ -777,7 +777,7 @@ std::string NdnApplPktDescriptor::getFieldAsString(void *object, int field, int 
     }
 }
 
-bool NdnApplPktDescriptor::setFieldAsString(void *object, int field, int i, const char *value) const
+bool NdnAppPktDescriptor::setFieldAsString(void *object, int field, int i, const char *value) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -785,7 +785,7 @@ bool NdnApplPktDescriptor::setFieldAsString(void *object, int field, int i, cons
             return basedesc->setFieldAsString(object,field,i,value);
         field -= basedesc->getFieldCount(object);
     }
-    NdnApplPkt *pp = (NdnApplPkt *)object; (void)pp;
+    NdnAppPkt *pp = (NdnAppPkt *)object; (void)pp;
     switch (field) {
         case 0: pp->setMaxNbHops(string2long(value)); return true;
         case 1: pp->setNbHops(string2long(value)); return true;
@@ -819,7 +819,7 @@ bool NdnApplPktDescriptor::setFieldAsString(void *object, int field, int i, cons
     }
 }
 
-const char *NdnApplPktDescriptor::getFieldStructName(void *object, int field) const
+const char *NdnAppPktDescriptor::getFieldStructName(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -833,7 +833,7 @@ const char *NdnApplPktDescriptor::getFieldStructName(void *object, int field) co
     };
 }
 
-void *NdnApplPktDescriptor::getFieldStructPointer(void *object, int field, int i) const
+void *NdnAppPktDescriptor::getFieldStructPointer(void *object, int field, int i) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -841,7 +841,7 @@ void *NdnApplPktDescriptor::getFieldStructPointer(void *object, int field, int i
             return basedesc->getFieldStructPointer(object, field, i);
         field -= basedesc->getFieldCount(object);
     }
-    NdnApplPkt *pp = (NdnApplPkt *)object; (void)pp;
+    NdnAppPkt *pp = (NdnAppPkt *)object; (void)pp;
     switch (field) {
         case 4: return (void *)(&pp->getCreatorAddr()); break;
         default: return NULL;
