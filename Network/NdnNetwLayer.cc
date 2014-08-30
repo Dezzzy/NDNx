@@ -42,22 +42,35 @@ void NdnNetwLayer::handleSelfMsg(cMessage *msg)
 
 void NdnNetwLayer::handleLowerMsg(cMessage* msg)
 {
-
+    NdnNetPkt* netPkt = check_and_cast<NdnNetPkt*>(msg);
+    sendUp(decapMsg(netPkt));
 }
 
 void NdnNetwLayer::handleUpperMsg(cMessage* msg)
 {
-    //sendDown(encapMsg(msg));
+    NdnNetPkt* netPkt;
+    netPkt = encapMsg(msg);
+
+    sendDown(netPkt);
 }
 
-cMessage* NdnNetwLayer::decapMsg(cMessage* msg)
+cMessage* NdnNetwLayer::decapMsg(NdnNetPkt* msg)
 {
+    cMessage* decappedPkt;
 
+    return decappedPkt;
 }
 
-cMessage* NdnNetwLayer::encapMsg(cMessage* msg)
+NdnNetPkt* NdnNetwLayer::encapMsg(cMessage* msg)
 {
-
+    int networkMsgKind = msg->getKind();
+    NdnNetPkt* encappedPkt = new NdnNetPkt(msg->getName(),getNetMsgKind());
+    return encappedPkt;
 }
 
+int NdnNetwLayer::getNetMsgKind()
+{
+    int convertedMsgKind;
+    return convertedMsgKind;
+}
 

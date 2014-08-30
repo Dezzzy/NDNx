@@ -21,13 +21,5 @@ class LAddress::L3Type extends void;
 
 packet NdnNetPkt extends NetwPkt {
         LAddress::L3Type creatorAddr;
-        unsigned int pitBloomFilterMap1;
-        unsigned int pitBloomFilterMap2;
-        unsigned int pitBloomFilterMap3;
-        unsigned int pitBloomFilterMap4;
         
-        unsigned int csBloomFilterMap1;
-        unsigned int csBloomFilterMap2;
-        unsigned int csBloomFilterMap3;
-        unsigned int csBloomFilterMap4;
 }

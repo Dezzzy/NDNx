@@ -18,10 +18,10 @@
 
 #include <omnetpp.h>
 #include "BaseNetwLayer.h"
-//#include "NdnNetwPkt_m.h"
+#include "NdnNetPkt_m.h"
 #include "NdnDaemon.h"
 
-//class NdnNetwPkt;
+class NdnNetPkt;
 
 class NdnNetwLayer : public BaseNetwLayer
 {
@@ -41,9 +41,9 @@ public:
     virtual void handleSelfMsg(cMessage* msg);
     virtual void handleLowerMsg(cMessage *msg);
     virtual void handleUpperMsg(cMessage *msg);
-    cMessage* decapMsg(cMessage* msg);
-    cMessage* encapMsg(cMessage* msg);
-
+    cMessage* decapMsg(NdnNetPkt* msg);
+    NdnNetPkt* encapMsg(cMessage* msg);
+    int getNetMsgKind(int applMsgKind);
 
 
 
