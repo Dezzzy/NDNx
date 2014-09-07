@@ -36,6 +36,7 @@ public:
     virtual void initialize(int stage);
   protected:
     int CacheSize;
+    simtime_t timeToLive;
 
 
     virtual void handleSelfMsg(cMessage* msg);

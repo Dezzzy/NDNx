@@ -300,6 +300,7 @@ void NdnApplLayer::ProcessMapData(NdnAppPkt* msg)
     threeHopList[1][2] = msg->getThCsBFM3();
     threeHopList[1][3] = msg->getThCsBFM4();
 
+
     cDaemon->updateForwardingInfoBase(msg->getSrcAddr(), oneHopList, twoHopList, threeHopList,xHopList);
 }
 

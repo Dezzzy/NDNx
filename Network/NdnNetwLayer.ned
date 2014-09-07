@@ -24,4 +24,5 @@ simple NdnNetwLayer extends BaseNetwLayer like IBaseNetwLayer
 {
     parameters:
         int CacheSize;
+        double timeToLive @unit("seconds") = default(300s);
 }

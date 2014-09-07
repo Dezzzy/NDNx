@@ -23,7 +23,7 @@ void NdnNetwLayer::initialize(int stage)
     BaseNetwLayer::initialize(stage);
     if(stage == 0){
         CacheSize = par("CacheSize");
-
+        timeToLive = par("timeToLive");
 
     }
     if(stage == 1){
@@ -43,7 +43,8 @@ void NdnNetwLayer::handleSelfMsg(cMessage *msg)
 void NdnNetwLayer::handleLowerMsg(cMessage* msg)
 {
     NdnNetPkt* netPkt = check_and_cast<NdnNetPkt*>(msg);
-    sendUp(decapMsg(netPkt));
+    NdnNetPkt* mCopy = static_cast<NdnNetPkt*>(netPkt->dup());
+    sendUp(decapMsg(mCopy));
 }
 
 void NdnNetwLayer::handleUpperMsg(cMessage* msg)
@@ -56,21 +57,38 @@ void NdnNetwLayer::handleUpperMsg(cMessage* msg)
 
 cMessage* NdnNetwLayer::decapMsg(NdnNetPkt* msg)
 {
-    cMessage* decappedPkt;
-
+    cMessage* decappedPkt = msg->decapsulate();
+    //decappedPkt->setControlInfo(new ProbBcastNetwControlInfo(msg->getSrcAddr()));
+    delete msg;
     return decappedPkt;
 }
 
 NdnNetPkt* NdnNetwLayer::encapMsg(cMessage* msg)
 {
-    int networkMsgKind = msg->getKind();
     NdnNetPkt* encappedPkt = new NdnNetPkt(msg->getName(),getNetMsgKind());
+
+    encappedPkt->setByteLength(headerLength);
+    encappedPkt->setSrcAddr(myNetwAddr);
+    encappedPkt->setDestAddr(LAddress::L3BROADCAST);
+    encappedPkt->setCreatorAddr(myNetwAddr);
+
+    encappedPkt->encapsulate(msg);
+
+
     return encappedPkt;
 }
 
-int NdnNetwLayer::getNetMsgKind()
+int NdnNetwLayer::getNetMsgKind(int applMsgKind)
 {
     int convertedMsgKind;
+    if(applMsgKind == 25251){
+        convertedMsgKind = NDN_NETW_DATA_MESSAGE;
+    } else if(applMsgKind == 25252){
+        convertedMsgKind = NDN_NETW_INTEREST_MESSAGE;
+    } else{
+        opp_error("configuration error, message sent from application layer was not DATA/INTEREREST");
+    }
+
     return convertedMsgKind;
 }
 
