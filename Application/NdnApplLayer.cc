@@ -118,6 +118,11 @@ void NdnApplLayer::sendNextMsg(NdnAppPkt* pkt, LAddress::L3Type dAddr)
     sendDown(m);
 }
 
+void NdnApplLayer::sendNextMsg(NdnAppPkt*pkt)
+{
+
+}
+
 /*
 * generateInterestPkt(const char* name):
 * This is method used to generate new interest packets in conjunction with sendNextMsg
@@ -147,16 +152,32 @@ void NdnApplLayer::generateInterestPkt(const char* name)
 
 /*
 * generateDataPkt(const char*,LAddress::L3Type, int hopDistance):
-* THIS FUNCTION NEEDS ATTENTION!!!!
+*
 * This function generates a data packet and inserts it into the Content Store
 */
-void NdnApplLayer::generateDataPkt(const char* name,LAddress::L3Type destAddr, int hopDistance)
+void NdnApplLayer::generateDataPkt(const char* name,LAddress::L3Type destAddr)
 {
     int msgId = uniform(0,1000);
-    LAddress::L3Type interface = LAddress::L3NULL;
-    // getting routing info
-    //cDaemon->
-    sendNextMsg(name, BASE_NDN_DATA_MESSAGE,myApplAddr(),destAddr,hopDistance,0,msgId);
+
+    NdnAppPkt* newApplPkt = new NdnApplPkt(name, BASE_NDN_DATA_MESSAGE);
+    newApplPkt->setCreatorAddr(myApplAddr());
+    newApplPkt->setSrcAddr(myApplAddr());
+    newApplPkt->setMsgId(msgId);
+    newApplPkt->setNbHops(0);
+
+    int hopDistance;
+    LAddress::L3Type intermediateDestAddress;
+    cDaemon->getRoutingInfo(name,&hopDistance,&intermediateDestAddress);
+    if(hopDistance>3){
+        hopDistance = LONG_HOP;
+    } else{
+        hopDistance = STANDARD_HOP;
+    }
+
+    newApplPkt->setMaxNbHops(hopDistance);
+    newApplPkt->setDestAddr(intermediateDestAddress);
+    KnownMsgs.insert(msgId);
+    sendNextMsg(newApplPkt);
 }
 
 /*
@@ -175,31 +196,28 @@ void NdnApplLayer::processInterestPkt(NdnAppPkt* pkt)
     nbHops = pkt->getNbHops() + 1;
     instructionStatus = cDaemon->processInterest(pkt->getName(), pkt->getCreatorAddr(), pkt->getSrcAddr(),nbHops);
     switch(instructionStatus){
+
     case CacheDaemon::SEND_DATA:
         if(pkt->getIsExtendedPkt()){
             hopDistance = LONG_HOP;
         } else{
             hopDistance = STANDARD_HOP;
         }
-        generateDataPkt(pkt->getName(),pkt->getSrcAddr(),hopDistance);// **************************** Needs Attention*************************************
+        generateDataPkt(pkt->getName(),pkt->getSrcAddr());// **************************** Needs Attention*************************************
         break;
+
     case CacheDaemon::SEND_INTEREST:
+        int isExtendedPkt;
         if(nbHops < pkt->getMaxNbHops()){
             // packet is still within distance limit, so further propagation is allowed
-            sendNextMsg(pkt->getName(), BASE_NDN_INTEREST_MESSAGE, pkt->getCreatorAddr(), LAddress::L3BROADCAST,pkt->getMaxNbHops(), nbHops,pkt->getMsgId());
+            isExtendedPkt = 1;
         } else{
-            // packet has reached end of propagation
-            // we search the name space of neighbours for matching entries, if a match is found, extend packet and continue forwarding
-            LAddress::L3Type interface = LAddress::L3NULL;
-            int minMax;
-            cDaemon->searchForData(pkt->getName(),&interface,&minMax);
-            if(interface != LAddress::L3NULL){
-                pkt->setIsExtendedPkt(1);
-                sendNextMsg(pkt,interface);
-            }
+            isExtendedPkt = 0;
         }
 
+        sendInterestPkt(/* to be modified after function completed*/);
         break;
+
     case CacheDaemon::DO_NOTHING:
         // old packet or useless data, either will be cached or deleted, decided by cache daemon or relevant cache entity
         break;
@@ -236,6 +254,65 @@ void NdnApplLayer::processDataPkt(NdnAppPkt* pkt)
     }
     if(instructionStatus == CacheDaemon::INTEREST_FOUND ||instructionStatus == CacheDaemon::SEND_DATA_INTEREST_FOUND){
         deleteMsgInterestQueue(pkt->getName());
+    }
+}
+
+void NdnApplLayer::sendInterestPkt(NdnAppPkt* oldPkt)
+{
+    NdnAppPkt* xGenApplPkt = new NdnAppPkt(oldPkt->getName(),BASE_NDN_INTEREST_MESSAGE);
+
+    int nbHops = oldPkt->getNbHops() + 1;
+    if(nbHops >= oldPkt->getMaxNbHops()){
+        if(oldPkt->getIsExtendedPkt()){
+            delete oldPkt;
+            delete xGenApplPkt;
+        } else{
+            xGenApplPkt->setIsExtendedPkt(1);
+        }
+    }
+
+    if(xGenApplPkt != NULL){
+        xGenApplPkt->setCreatorAddr(oldPkt->getCreatorAddr());
+        xGenApplPkt->setSrcAddr(myApplAddr());
+        xGenApplPkt->setNbHops(nbHops);
+        if(xGenApplPkt->getIsExtendedPkt()){
+            xGenApplPkt->setMaxNbHops(LONG_HOP);
+        } else{
+            xGenApplPkt->setMaxNbHops(STANDARD_HOP);
+        }
+        xGenApplPkt->setMsgId(oldPkt->getMsgId);
+
+        xGenApplPkt->setDestAddr(LAddress::L3BROADCAST);
+        sendNextMsg(xGenApplPkt);
+    }
+}
+
+void NdnApplLayer::sendDataPkt(NdnAppPkt* oldPkt)
+{
+    NdnAppPkt* xGenAppPkt = new NdnAppPkt(oldPkt->getName(),BASE_NDN_DATA_MESSAGE);
+    int nbHops = oldPkt->getNbHops() + 1;
+    if(nbHops >= oldPkt->getMaxNbHops()){
+        delete oldPkt;
+        delete xGenAppPkt;
+
+    } else{
+        xGenAppPkt->setCreatorAddr(oldPkt->getCreatorAddr());
+        xGenAppPkt->setSrcAddr(myApplAddr());
+        xGenAppPkt->setNbHops(nbHops);
+        xGenAppPkt->setMaxNbHops(oldPkt->getMaxNbHops());
+        xGenAppPkt->setMsgId(oldPkt->getMsgId);
+
+        int hopDistance;
+        LAddress::L3Type interfaceAddress;
+        cDaemon->getRoutingInfo(name,&hopDistance,&interfaceAddress);
+        if(interfaceAddress != LAddress::L3NULL){
+            xGenAppPkt->setDestAddr(interfaceAddress);
+            delete oldPkt;
+            sendNextMsg(xGenAppPkt);
+        } else{
+            delete xGenAppPkt;
+            delete oldPkt;
+        }
     }
 }
 

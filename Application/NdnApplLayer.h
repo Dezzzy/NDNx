@@ -83,12 +83,7 @@ protected:
     };
 
 
-    void sendNextMsg(const char* name, int pktType, LAddress::L3Type pktCreator,LAddress::L3Type destAddr, int propagationDistance, int hopNum,int msgId);
-    void sendNextMsg(NdnAppPkt* pkt, LAddress::L3Type dAddr);
-    void generateInterestPkt(const char* name);
-    void generateDataPkt(const char* name,LAddress::L3Type destAddr, int hopDistance);
-    void processInterestPkt(NdnAppPkt* pkt);
-    void processDataPkt(NdnAppPkt* pkt);
+
     void ProcessMapData(NdnAppPkt* msg);
     void GenerateMapData(NdnAppPkt* msg);
 
@@ -96,6 +91,20 @@ protected:
     void popMsgInterestQueue(cMessage* msg);
     void deleteMsgInterestQueue(const char* name);
     void insertMsgInterestQueue(reMsg* qMsg);
+
+    // working function list
+    //functions to be added
+    void sendInterestPkt(NdnAppPkt* oldPkt);
+    void sendDataPkt(NdnAppPkt* oldPkt);
+
+    // functions to be modified
+    void sendNextMsg(const char* name, int pktType, LAddress::L3Type pktCreator,LAddress::L3Type destAddr, int propagationDistance, int hopNum,int msgId);
+    void sendNextMsg(NdnAppPkt* pkt, LAddress::L3Type dAddr);
+    void sendNextMsg(NdnAppPkt* pkt);
+    void generateInterestPkt(const char* name);
+    void generateDataPkt(const char* name,LAddress::L3Type destAddr, int hopDistance);
+    void processInterestPkt(NdnAppPkt* pkt);
+    void processDataPkt(NdnAppPkt* pkt);
 
 };
 
