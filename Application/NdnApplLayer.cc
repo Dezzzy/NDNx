@@ -120,7 +120,8 @@ void NdnApplLayer::sendNextMsg(NdnAppPkt* pkt, LAddress::L3Type dAddr)
 
 void NdnApplLayer::sendNextMsg(NdnAppPkt*pkt)
 {
-
+    GenerateMapData(pkt);
+    sendDown(pkt);
 }
 
 /*
@@ -155,7 +156,7 @@ void NdnApplLayer::generateInterestPkt(const char* name)
 *
 * This function generates a data packet and inserts it into the Content Store
 */
-void NdnApplLayer::generateDataPkt(const char* name,LAddress::L3Type destAddr)
+void NdnApplLayer::generateDataPkt(const char* name)
 {
     int msgId = uniform(0,1000);
 
@@ -198,24 +199,11 @@ void NdnApplLayer::processInterestPkt(NdnAppPkt* pkt)
     switch(instructionStatus){
 
     case CacheDaemon::SEND_DATA:
-        if(pkt->getIsExtendedPkt()){
-            hopDistance = LONG_HOP;
-        } else{
-            hopDistance = STANDARD_HOP;
-        }
-        generateDataPkt(pkt->getName(),pkt->getSrcAddr());// **************************** Needs Attention*************************************
+        generateDataPkt(pkt->getName());// **************************** Needs Attention*************************************
         break;
 
     case CacheDaemon::SEND_INTEREST:
-        int isExtendedPkt;
-        if(nbHops < pkt->getMaxNbHops()){
-            // packet is still within distance limit, so further propagation is allowed
-            isExtendedPkt = 1;
-        } else{
-            isExtendedPkt = 0;
-        }
-
-        sendInterestPkt(/* to be modified after function completed*/);
+        sendInterestPkt(pkt);
         break;
 
     case CacheDaemon::DO_NOTHING:
@@ -243,10 +231,9 @@ void NdnApplLayer::processDataPkt(NdnAppPkt* pkt)
     instructionStatus = cDaemon->processData(pkt->getName(),hCount,iAddr);
     if(instructionStatus == CacheDaemon::SEND_DATA || instructionStatus == CacheDaemon::SEND_DATA_INTEREST_FOUND){
         if(nbHops < pkt->getMaxNbHops()){
-            int minMax;
-            cDaemon->searchForData(pkt->getName(),iAddr,&minMax);
+
             if(*iAddr != LAddress::L3NULL){
-                sendNextMsg(pkt->getName(),pkt->getKind(),pkt->getCreatorAddr(),LAddress::L3BROADCAST,pkt->getMaxNbHops(),nbHops,pkt->getMsgId());
+                sendDataPkt(pkt);
             }
         } else{
 

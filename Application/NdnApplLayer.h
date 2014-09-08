@@ -102,7 +102,7 @@ protected:
     void sendNextMsg(NdnAppPkt* pkt, LAddress::L3Type dAddr);
     void sendNextMsg(NdnAppPkt* pkt);
     void generateInterestPkt(const char* name);
-    void generateDataPkt(const char* name,LAddress::L3Type destAddr, int hopDistance);
+    void generateDataPkt(const char* name);
     void processInterestPkt(NdnAppPkt* pkt);
     void processDataPkt(NdnAppPkt* pkt);
 
