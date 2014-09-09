@@ -65,14 +65,15 @@ cMessage* NdnNetwLayer::decapMsg(NdnNetPkt* msg)
 
 NdnNetPkt* NdnNetwLayer::encapMsg(cMessage* msg)
 {
-    NdnNetPkt* encappedPkt = new NdnNetPkt(msg->getName(),getNetMsgKind());
+    NdnNetPkt* encappedPkt = new NdnNetPkt(msg->getName(),getNetMsgKind(msg->getKind()));
 
     encappedPkt->setByteLength(headerLength);
     encappedPkt->setSrcAddr(myNetwAddr);
     encappedPkt->setDestAddr(LAddress::L3BROADCAST);
     encappedPkt->setCreatorAddr(myNetwAddr);
 
-    encappedPkt->encapsulate(msg);
+    cPacket* m = static_cast<cPacket*>(msg);
+    encappedPkt->encapsulate(m);
 
 
     return encappedPkt;
