@@ -20,18 +20,22 @@ import org.mixim.base.modules.IBaseArp;
 import org.mixim.base.modules.IBaseNetwLayer;
 import org.mixim.base.modules.IMobility;
 import org.mixim.modules.NDNx.Cache.ICacheDaemon;
-import org.mixim.modules.NDNx.NdnDaemon.INdnDaemon;
+import org.mixim.modules.NDNx.Cache.IContentStore;
+import org.mixim.modules.NDNx.Cache.IForwardingInfoBase;
+import org.mixim.modules.NDNx.Cache.IPendingInterestTable;
 import org.mixim.modules.nic.IWirelessNicUpperCtrl;
 
 
 module NdnNode
 {
     parameters:
-        string ndnDaemonType = default("NdnDaemon");
-        string cacheDaemonType = default("NdnCacheDaemon");
+        string cacheDaemonType = default("CacheDaemon");
+        string PendingInterestType = default("PendingInterestTable");
+        string ContentStoreType = default("ContentStore");
+        string ForwardingInfoBaseType = default("ForwardingInfoBase");
         string arpType = default("BaseArp");
         string applicationType = default("NdnApplLayer");
-        string networktype = default("BaseNetwLayer");
+        string networktype = default("NdnNetwLayer");
         string mobilityType = default("ConstSpeedMobility");
         string nicType;
 
@@ -59,12 +63,21 @@ module NdnNode
         appl: <applicationType> like IBaseApplLayer {
             @display("p=70,50");
         }
-        ndn: <ndnDaemonType> like INdnDaemon {
-            @display("p=162,196");
-        }
+
         cache: <cacheDaemonType> like ICacheDaemon {
 
             @display("p=162,128");
+        }
+
+        pit: <PendingInterestTableType> like IPendingInterestTable {
+            @display("p=162,196");
+        }
+
+        cs: <ContentStoreType> like IContentStore {
+            @display("p=314,196");
+        }
+        fib: <ForwardingInfoBase> like IForwardingInfoBase {
+            @display("p=239,196");
         }
     connections allowunconnected:
         netwl.upperLayerOut --> appl.lowerLayerIn;

@@ -38,8 +38,10 @@ module NdnCache
             @display("p=162,51");
         }
 
-        cs: <ContentStoreType> like IContentStore;
+        cs: <ContentStoreType> like IContentStore {
+            @display("p=329,51");
+        }
         fib: <ForwardingInfoBase> like IForwardingInfoBase {
-            @display("p=335,51");
+            @display("p=245,51");
         }
 }
