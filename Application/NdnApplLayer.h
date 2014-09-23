@@ -106,6 +106,9 @@ protected:
     void processInterestPkt(NdnAppPkt* pkt);
     void processDataPkt(NdnAppPkt* pkt);
 
+    // Application Layer Test Functions
+    void testApplicationLayer();
+
 };
 
 #endif

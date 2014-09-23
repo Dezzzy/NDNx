@@ -30,12 +30,12 @@ module NdnNode
 {
     parameters:
         string cacheDaemonType = default("CacheDaemon");
-        string PendingInterestType = default("PendingInterestTable");
+        string PendingInterestTableType = default("PendingInterestTable");
         string ContentStoreType = default("ContentStore");
         string ForwardingInfoBaseType = default("ForwardingInfoBase");
         string arpType = default("BaseArp");
         string applicationType = default("NdnApplLayer");
-        string networktype = default("NdnNetwLayer");
+        string networkType = default("NdnNetwLayer");
         string mobilityType = default("ConstSpeedMobility");
         string nicType;
 
@@ -76,7 +76,7 @@ module NdnNode
         cs: <ContentStoreType> like IContentStore {
             @display("p=314,196");
         }
-        fib: <ForwardingInfoBase> like IForwardingInfoBase {
+        fib: <ForwardingInfoBaseType> like IForwardingInfoBase {
             @display("p=239,196");
         }
     connections allowunconnected:

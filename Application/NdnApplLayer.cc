@@ -65,6 +65,7 @@ void NdnApplLayer::handleSelfMsg(cMessage* msg)
     if(msg->getKind() == BASE_NDN_START_MESSAGE){
         if(strcmp(NodeType, "Master")){
             //generateInterestPkt(TargetWord);
+            //testApplicationLayer();
         }
         cancelEvent(startMsg);
     }else if(msg->getKind() == INTEREST_REBROADCAST_MESSAGE){
@@ -466,6 +467,7 @@ void NdnApplLayer::popMsgInterestQueue(cMessage* msg)
             it->second->nbResends++;
             insertMsgInterestQueue(qMsg);
             //sendNextMsg(qMsg->msg->getName(), BASE_NDN_INTEREST_MESSAGE,myApplAddr(),LAddress::L3BROADCAST, LONG_HOP, 0,qMsg->msgId);
+            EV<<"popping msg from interest queue"<<endl;
         }
 
         if(!InterestMsgs.empty()){
@@ -504,4 +506,27 @@ void NdnApplLayer::insertMsgInterestQueue(reMsg* qMsg)
     }
     SentMsgs::value_type intPair = make_pair(qMsg->msg->getName(), qMsg);
     InterestMsgs.insert(intPair);
+}
+
+/*
+ * Application Layer Test Functions
+ */
+
+void NdnApplLayer::testApplicationLayer()
+{
+    // test interest msg queue
+    reMsg* testQMsg = new reMsg;
+    int msgId = uniform(0,1000);
+    int resend = 0;
+    cMessage* testMsg = new cMessage("test-interest-queue-msg",BASE_NDN_INTEREST_MESSAGE);
+    testQMsg->msg = testMsg;
+    testQMsg->msgId = msgId;
+    testQMsg->nbResends = resend;
+
+    insertMsgInterestQueue(testQMsg);
+
+    EV<<"interest Queue testing complete"<<endl;
+
+
+
 }
