@@ -115,13 +115,15 @@ void NdnApplLayer::sendNextMsg(NdnAppPkt* pkt, LAddress::L3Type dAddr)
     m->setNbHops(pkt->getNbHops()+1);
     m->setDestAddr(dAddr);
     GenerateMapData(m);
+    NetwControlInfo::setControlInfo(pkt, pkt->getSrcAddr());
 
     sendDown(m);
 }
 
-void NdnApplLayer::sendNextMsg(NdnAppPkt*pkt)
+void NdnApplLayer::sendNextMsg(NdnAppPkt* pkt)
 {
     GenerateMapData(pkt);
+    NetwControlInfo::setControlInfo(pkt, pkt->getSrcAddr());
     sendDown(pkt);
 }
 
@@ -211,7 +213,7 @@ void NdnApplLayer::processInterestPkt(NdnAppPkt* pkt)
     switch(instructionStatus){
 
     case CacheDaemon::SEND_DATA:
-        generateDataPkt(pkt->getName());// **************************** Needs Attention*************************************
+        generateDataPkt(pkt->getName());
         break;
 
     case CacheDaemon::SEND_INTEREST:
