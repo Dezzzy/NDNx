@@ -31,6 +31,7 @@ void CacheDaemon::initialize(int stage)
         WordSize = par("WordSize");
         timeToLive = par("timeToLive");
         startDelay = par("startDelay");
+        TestingVariable = par("TestingVariable");
         startMsg = new cMessage("start message", START_MESSAGE);
         spookyHasher = new SpookyHash;
         mmHasher = new MurmurHash;
@@ -62,7 +63,9 @@ void CacheDaemon::handleSelfMsg(cMessage* msg)
 
         EV << " handle Self Msg "<< endl;
         cancelEvent(msg);
-        //testFull();
+        if(TestingVariable){
+            CacheTesting();
+        }
         break;
     case FORWARDING_INFO_TIMER:
         break;
@@ -397,4 +400,60 @@ void CacheDaemon::arrayToUlong(int* array, uint32_t* ulong)
     ulong[1] = uLong2.to_ulong();
     ulong[2] = uLong3.to_ulong();
     ulong[3] = uLong4.to_ulong();
+}
+
+void CacheDaemon::CacheTesting()
+{
+    // test individual caches for any mistakes
+    PendingInterestTableTesting();
+    ContentStoreTesting();
+    ForwardingInfoBaseTesting();
+
+    // test final cache operation
+    CacheDaemonTesting();
+}
+
+void CacheDaemon::PendingInterestTableTesting()
+{
+    LAddress::L3Type srcAddress = LAddress::L3Type(100);
+    LAddress::L3Type interfaceAddress = LAddress::L3Type(101);
+    LAddress::L3Type sAddress = LAddress::L3NULL;
+    LAddress::L3Type iAddress = LAddress::L3NULL;
+    int requestType = PendingInterestTable::EXT_REQ;
+    int reqType = 99;
+    //
+    Pit->updatePendingInterestTable("test",srcAddress,requestType,interfaceAddress);
+    Pit->retreiveEntryFromPIT("test",&reqType,&sAddress,&iAddress);
+    int pitCheck = 0;
+    while(pitCheck == 0){
+        if(reqType == requestType && sAddress == srcAddress && iAddress == interfaceAddress){
+            pitCheck = 0;
+            EV<<"insertion and retreival of single name is SUCCESSFUL"<<endl;
+
+        }
+    }
+
+    if(pitCheck){
+        Pit->updatePendingInterestTable("butterfly",srcAddress,requestType,interfaceAddress);
+        Pit->retreiveEntryFromPIT("butterfly",&reqType,&sAddress,&iAddress);
+        int secondPitCheck = 0;
+        if(reqType == requestType && sAddress == srcAddress && iAddress == interfaceAddress){
+            EV<<"insertion and retreival of second name is SUCCESSFUL"<<endl;
+        }
+    }
+}
+
+void CacheDaemon::ContentStoreTesting()
+{
+
+}
+
+void CacheDaemon::ForwardingInfoBaseTesting()
+{
+
+}
+
+void CacheDaemon::CacheDaemonTesting()
+{
+
 }

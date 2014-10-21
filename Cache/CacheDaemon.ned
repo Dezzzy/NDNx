@@ -21,6 +21,7 @@ simple CacheDaemon like ICacheDaemon
     parameters:
         int CacheSize = default(128);
         int WordSize = default(100);
+        int TestingVariable = default(0);
         double timeToLive @unit("seconds") = default(600s);
         double startDelay @unit("seconds") = default(10s);
 }

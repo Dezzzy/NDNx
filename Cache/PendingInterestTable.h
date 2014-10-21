@@ -51,7 +51,7 @@ public:
 
     };
 
-    enum PENDINGI_INTEREST_MESSAGE_TYPES{
+    enum PENDING_INTEREST_MESSAGE_TYPES{
         PIT_MAINTENANCE,
         PIT_CONTROL_MESSAGE
     };

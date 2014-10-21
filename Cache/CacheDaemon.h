@@ -97,6 +97,7 @@ protected:
 
     int CacheSize;
     int WordSize;
+    int TestingVariable;
     simtime_t timeToLive;
     simtime_t startDelay;
     SpookyHash* spookyHasher;
@@ -116,6 +117,12 @@ protected:
     void ulongToArray(int* array, uint32_t* ulong);
     void arrayToUlong(int* array, uint32_t* ulong);
     // testing functions
+
+    void CacheTesting();
+    void PendingInterestTableTesting();
+    void ContentStoreTesting();
+    void ForwardingInfoBaseTesting();
+    void CacheDaemonTesting();
 
 
 };
