@@ -441,11 +441,26 @@ void CacheDaemon::PendingInterestTableTesting()
             EV<<"insertion and retreival of second name is SUCCESSFUL"<<endl;
         }
     }
+
+
 }
 
 void CacheDaemon::ContentStoreTesting()
 {
+    Cs->updateContentStore("test");
+    int DaemonInstruction = Cs->retreiveContentStore("test");
 
+    // Insertion and Rerieval Test
+    switch(DaemonInstruction){
+    case ContentStore::DATA_NOT_FOUND:
+        break;
+    case ContentStore::DATA_FOUND:
+        break;
+    case ContentStore::REQ_COMPLETED:
+        break;
+    default:
+        break;
+    }
 }
 
 void CacheDaemon::ForwardingInfoBaseTesting()

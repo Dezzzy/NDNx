@@ -174,6 +174,8 @@ int PendingInterestTable::deleteEntryFromPIT(cMessage* msg)
     if(CacheMem[cacheIndex] == 0){
         EV<<"Pit delete works"<<endl;
     }
+
+    return 1;
 }
 
 int PendingInterestTable::deleteEntryFromPIT(const char* name)

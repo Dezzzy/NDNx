@@ -113,12 +113,17 @@ int ContentStore::retreiveContentStore(const char* name)
     int instructionStatus;
 
     csIndex = searchContentStore(name);
+
     if(csIndex == (CacheSize+1)){
         instructionStatus = DATA_NOT_FOUND;
     } else{
-        instructionStatus = DATA_FOUND;
-        CompletedRequests[csIndex] = 1;
-        EV<<"this word was found:    "<< name << endl;
+        if(CompletedRequests[csIndex] == 1){
+            instructionStatus = REQ_COMPLETED;
+        } else{
+            instructionStatus = DATA_FOUND;
+            CompletedRequests[csIndex] = 1;
+            EV<<"this word was found:    "<< name << endl;
+        }
     }
 
     return instructionStatus;
@@ -143,6 +148,8 @@ int ContentStore::deleteFromContentStore(cMessage* msg)
         instructionStatus = DATA_DELETED;
         CacheMem[csIndex] = 0;
     }
+
+    return instructionStatus;
 }
 
 void ContentStore::getCsBloomFilter(int* newBloomFilter)

@@ -39,7 +39,7 @@ public:
         DATA_DELETED,
 
         NAME_FOUND,
-
+        REQ_COMPLETED
 
     };
 
