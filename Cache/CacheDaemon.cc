@@ -450,13 +450,50 @@ void CacheDaemon::ContentStoreTesting()
     Cs->updateContentStore("test");
     int DaemonInstruction = Cs->retreiveContentStore("test");
 
-    // Insertion and Rerieval Test
+    // Insertion and Retrieval Test
     switch(DaemonInstruction){
     case ContentStore::DATA_NOT_FOUND:
+        EV<<"test failed, data should be retreived, recheck"<<endl;
         break;
     case ContentStore::DATA_FOUND:
+        EV<<"test success, first test complete"<<endl;
         break;
     case ContentStore::REQ_COMPLETED:
+        EV<<"test failed, recheck CS module"<<endl;
+        break;
+    default:
+        break;
+    }
+
+    // Second Retreival Test
+    DaemonInstruction = Cs->retreiveContentStore("test");
+    switch(DaemonInstruction){
+    case ContentStore::DATA_NOT_FOUND:
+        EV<<"test failed, data should be retreived, recheck"<<endl;
+        break;
+    case ContentStore::DATA_FOUND:
+        EV<<"test failed, recheck CS module"<<endl;
+        break;
+    case ContentStore::REQ_COMPLETED:
+        EV<<"test completed, second test complete"<<endl;
+        break;
+    default:
+        break;
+    }
+
+    // Third Test, Error Test
+    Cs->updateContentStore("Israel");
+    DaemonInstruction = Cs->retreiveContentStore("fuckup");
+    DaemonInstruction = Cs->retreiveContentStore("test");
+    switch(DaemonInstruction){
+    case ContentStore::DATA_NOT_FOUND:
+        EV<<"test completed,third test complete"<<endl;
+        break;
+    case ContentStore::DATA_FOUND:
+        EV<<"test failed, recheck CS module"<<endl;
+        break;
+    case ContentStore::REQ_COMPLETED:
+        EV<<"test failed"<<endl;
         break;
     default:
         break;

@@ -149,6 +149,7 @@ int ContentStore::deleteFromContentStore(cMessage* msg)
         CacheMem[csIndex] = 0;
     }
 
+    EV<<"delete complete, Cs"<<endl;
     return instructionStatus;
 }
 
