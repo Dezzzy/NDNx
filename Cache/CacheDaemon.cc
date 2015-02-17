@@ -484,7 +484,7 @@ void CacheDaemon::ContentStoreTesting()
     // Third Test, Error Test
     Cs->updateContentStore("Israel");
     DaemonInstruction = Cs->retreiveContentStore("fuckup");
-    DaemonInstruction = Cs->retreiveContentStore("test");
+    //DaemonInstruction = Cs->retreiveContentStore("test");
     switch(DaemonInstruction){
     case ContentStore::DATA_NOT_FOUND:
         EV<<"test completed,third test complete"<<endl;
@@ -502,6 +502,29 @@ void CacheDaemon::ContentStoreTesting()
 
 void CacheDaemon::ForwardingInfoBaseTesting()
 {
+    // test name interface list
+    LAddress::L3Type interfaceAddress = LAddress::L3Type(100);
+    int hopCount = 2;
+    int hCount;
+    LAddress::L3Type testAddress = LAddress::L3NULL;
+    Fib->updateNameInterfaceList("test",hopCount,interfaceAddress);
+    int faceListInstruction = Fib->retreiveEntryFromNameInterfaceList("test",&hCount,&testAddress);
+
+    switch(faceListInstruction){
+    case ForwardingInfoBase::NAME_FOUND:
+        if(hCount == hopCount && testAddress == interfaceAddress){
+            EV<< "FIB interface list test complete" << endl;
+        } else{
+            EV<< "FIB interface list test Failed "<< endl;
+        }
+        break;
+    case ForwardingInfoBase::NAME_NOT_FOUND:
+        EV<< "FIB interface list test Failed "<< endl;
+        break;
+
+    }
+    // test hop map list
+
 
 }
 
