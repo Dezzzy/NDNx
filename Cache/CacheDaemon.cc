@@ -530,5 +530,26 @@ void CacheDaemon::ForwardingInfoBaseTesting()
 
 void CacheDaemon::CacheDaemonTesting()
 {
+    // interest processing
+    LAddress::L3Type reqeustingAddress  = LAddress::L3Type(100);
+    LAddress::L3Type sourceAddress = LAddress::L3Type(101);
+    int hopDist = 1;
+
+    int CacheInstruction = processInterest("unknown", reqeustingAddress,sourceAddress,hopDist);
+
+    switch(CacheInstruction){
+    case SEND_INTEREST:
+        EV<<"CacheDaemon: processInterest  NEW INTEREST test success" <<endl;
+        break;
+    case SEND_DATA:
+        EV<<"CacheDaemon: processInterest NEW INTEREST test FAILURE" <<endl;
+        break;
+    case DO_NOTHING:
+        EV<<"CacheDaemon: processInterest NEW INTEREST test FAILURE" <<endl;
+        break;
+    }
+
+    CacheInstruction = processInterest("test",reqeustingAddress,sourceAddress,hopDist);
+
 
 }
