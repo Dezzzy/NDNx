@@ -15,9 +15,7 @@
 
 package org.mixim.modules.NDNx.Cache;
 
-moduleinterface ICacheDaemon
-{
-}
+
 simple NdnCacheDaemon like ICacheDaemon
 {
     parameters:

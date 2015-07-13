@@ -52,7 +52,9 @@ void PendingInterestTable::handleSelfMsg(cMessage *msg)
     case PIT_CONTROL_MESSAGE:
         deleteEntryFromPIT(msg);
         break;
-
+    case PIT_MAINTENANCE_MESSAGE:
+        PitMaintenance();
+        break;
     }
 }
 

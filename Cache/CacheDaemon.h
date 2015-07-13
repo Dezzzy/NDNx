@@ -21,14 +21,14 @@
 #include <map>
 
 #include <omnetpp.h>
-#include "BaseModule.h"
+#include "BaseLayer.h"
 #include <bitset>
 #include "SimpleAddress.h"
 #include "PendingInterestTable.h"
 #include "ContentStore.h"
 #include "ForwardingInfoBase.h"
 
-class CacheDaemon : public BaseModule
+class CacheDaemon : public BaseLayer
 {
 public:
     typedef std::bitset<128> BloomFilterMap;
@@ -109,6 +109,10 @@ protected:
     virtual void initialize(int stage);
     virtual void handleMessage(cMessage *msg);
     virtual void handleSelfMsg(cMessage *msg);
+    virtual void handleLowerMsg(cMessage *msg);
+    virtual void handleLowerControl(cMessage *msg) = 0;
+    virtual void handleUpperMsg(cMessage *msg) = 0;
+    virtual void handleUpperControl(cMessage *msg) = 0;
     void initializeCache();
 
     // Compound Functions

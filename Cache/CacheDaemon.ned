@@ -15,7 +15,14 @@
 
 package org.mixim.modules.NDNx.Cache;
 
-
+moduleinterface ICacheDaemon
+{
+    gates:
+        input lowerLayerIn; // from network layer
+        output lowerLayerOut; // to network layer
+        input lowerControlIn; // control from network layer
+        output lowerControlOut; // control to network layer
+}
 simple CacheDaemon like ICacheDaemon
 {
     parameters:
@@ -24,4 +31,10 @@ simple CacheDaemon like ICacheDaemon
         int TestingVariable = default(0);
         double timeToLive @unit("seconds") = default(600s);
         double startDelay @unit("seconds") = default(10s);
+        
+    gates:
+        input lowerLayerIn; // from network layer
+        output lowerLayerOut; // to network layer
+        input lowerControlIn; // control from network layer
+        output lowerControlOut; // control to network layer
 }

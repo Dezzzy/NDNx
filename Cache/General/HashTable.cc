@@ -133,6 +133,9 @@ int HashTable::deleteFromNameCache(const char* name, char** NameCache,int* Cache
         return NAME_NOT_FOUND;
     } else{
         CacheMemory[*cacheIndex] = 0;
+        uint32_t hValues[3];
+        getHashValues(name, hValues);
+        bloomFilterRemove(hValues[0],hValues[1], BloomFilter);
         return NAME_DELETED;
     }
 }
@@ -140,7 +143,7 @@ int HashTable::deleteFromNameCache(const char* name, char** NameCache,int* Cache
 int HashTable::bloomFilterSearch(uint32_t k1, uint32_t k2, int* BloomFilter)
 {
 
-    if(BloomFilter[k1] == 1 && BloomFilter[k2] == 1){
+    if(BloomFilter[k1] > 0 && BloomFilter[k2] > 0){
         return 1;
     } else{
         return 0;
@@ -150,8 +153,17 @@ int HashTable::bloomFilterSearch(uint32_t k1, uint32_t k2, int* BloomFilter)
 
 void HashTable::bloomFilterInsert(uint32_t k1, uint32_t k2, int* BloomFilter)
 {
-    BloomFilter[k1] = 1;
-    BloomFilter[k2] = 1;
+    BloomFilter[k1] = BloomFilter[k1] + 1;
+    BloomFilter[k2] = BloomFilter[k2] + 1;
+}
+
+void HashTable::bloomFilterRemove(uint32_t k1, uint32_t k2, int* BloomFilter)
+{
+    BloomFilter[k1] = BloomFilter[k1] - 1;
+    BloomFilter[k2] = BloomFilter[k2] -1;
+    if(BloomFilter[k1] < 0 || BloomFilter[k2] < 0){
+        //error("BloomFilter has negative values incorrect name removed");
+    }
 }
 
 void HashTable::getHashValues(const char* name,uint32_t* hashValues)

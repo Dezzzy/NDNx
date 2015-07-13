@@ -45,15 +45,6 @@ void CacheDaemon::initialize(int stage)
     }
 }
 
-void CacheDaemon::handleMessage(cMessage *msg)
-{
-    if(msg->isSelfMessage()){
-        handleSelfMsg(msg);
-
-    } else{
-        opp_error("Cache should not receive messages from other layers, recheck configuration");
-    }
-}
 
 void CacheDaemon::handleSelfMsg(cMessage* msg)
 {
@@ -72,6 +63,11 @@ void CacheDaemon::handleSelfMsg(cMessage* msg)
 
     }
 
+
+}
+
+void CacheDaemon::handleLowerMsg(cMessage *msg)
+{
 
 }
 

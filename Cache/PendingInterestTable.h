@@ -53,7 +53,8 @@ public:
 
     enum PENDING_INTEREST_MESSAGE_TYPES{
         PIT_MAINTENANCE,
-        PIT_CONTROL_MESSAGE
+        PIT_CONTROL_MESSAGE,
+        PIT_MAINTENANCE_MESSAGE
     };
 
     int searchPendingInterestTable(const char* name);
