@@ -91,13 +91,21 @@ public:
     int searchForInterest(const char* name, LAddress::L3Type* iAddr, int* minMax);
     int searchForData(const char* name, LAddress::L3Type* iAddr, int* minMax);
 
+    int searchDeadNonceList(const char* name, int nonce);
+    void deleteDeadNonceElement(int elementIndex);
+    void insertDeadNonceElement(const char* name, int nonce);
+    int getNonce(const char* name);
+
 
 
 protected:
-
     int CacheSize;
     int WordSize;
     int TestingVariable;
+    int* DeadNonce;
+    int D_Nonce_List_Size = 50;
+    int DeadNonceHashSeed = 5000;
+    int DeadNonceListPtr;
     simtime_t timeToLive;
     simtime_t startDelay;
     SpookyHash* spookyHasher;
@@ -114,6 +122,9 @@ protected:
     virtual void handleUpperMsg(cMessage *msg) = 0;
     virtual void handleUpperControl(cMessage *msg) = 0;
     void initializeCache();
+
+
+
 
     // Compound Functions
 

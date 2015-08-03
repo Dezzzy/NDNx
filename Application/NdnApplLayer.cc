@@ -32,6 +32,7 @@ void NdnApplLayer::initialize(int stage)
         pktTTL = par("pktTimeToLive");
         cDaemon = FindModule<CacheDaemon*>::findSubModule(findHost());
         broadcastTimer = new cMessage("BROADCAST Timer",INTEREST_REBROADCAST_MESSAGE);
+        nonceTimer = new cMessage("Nonce Timing Control Packet", NONCE_CONTROL_MESSAGE);
         startMsg = new cMessage("Start Message", BASE_NDN_START_MESSAGE);
 
     }
@@ -138,7 +139,7 @@ void NdnApplLayer::generateInterestPkt(const char* name)
     int instructionStatus = 0;
     int hopDistance = 3;
     int propDistance = STANDARD_HOP;
-    int msgId = uniform(0,1000);
+    int msgId = cDaemon->getNonce(name);
 
     instructionStatus = cDaemon->generateInterestEntry(name, myApplAddr(), myApplAddr());
 
@@ -171,7 +172,7 @@ void NdnApplLayer::generateInterestPkt(const char* name)
  */
 void NdnApplLayer::generateDataPkt(const char* name)
 {
-    int msgId = uniform(0,1000);
+    int msgId = cDaemon->getNonce(name);
 
     NdnAppPkt* newApplPkt = new NdnAppPkt(name, BASE_NDN_DATA_MESSAGE);
     newApplPkt->setCreatorAddr(myApplAddr());
@@ -508,6 +509,11 @@ void NdnApplLayer::insertMsgInterestQueue(reMsg* qMsg)
     }
     SentMsgs::value_type intPair = make_pair(qMsg->msg->getName(), qMsg);
     InterestMsgs.insert(intPair);
+}
+
+void NdnApplLayer::insertNonce(const char* name, int nonce)
+{
+
 }
 
 /*

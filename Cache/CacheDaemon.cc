@@ -35,6 +35,11 @@ void CacheDaemon::initialize(int stage)
         startMsg = new cMessage("start message", START_MESSAGE);
         spookyHasher = new SpookyHash;
         mmHasher = new MurmurHash;
+        DeadNonce = new int*[D_Nonce_List_Size];
+        for(int i = 0; i < D_Nonce_List_Size;i++){
+            DeadNonce[i] = new int[10];
+        }
+        DeadNonceListPtr = 0;
         Pit = FindModule<PendingInterestTable*>::findSubModule(findHost());
         Cs = FindModule<ContentStore*>::findSubModule(findHost());
         Fib = FindModule<ForwardingInfoBase*>::findSubModule(findHost());
@@ -348,6 +353,74 @@ int CacheDaemon::searchForData(const char* name, LAddress::L3Type* iAddr, int* m
     return SEARCH_COMPLETE;
 }
 
+int CacheDaemon::searchDeadNonceList(const char* name, int nonce)
+{
+    int len = strlen(name);
+
+    int nameHash = mmHasher->MurmurHash3(name, len, 1) % DeadNonceHashSeed;
+    int unseededNonce = nonce - nameHash;
+    int i, nameFound = 0;
+
+    while (!nameFound){
+        if(i < D_Nonce_List_Size){
+            if(DeadNonce[i][0] == nameHash){
+                nameFound = 1;
+            } else{
+                i++;
+            }
+        }
+    }
+
+    int nonceFound = 0;
+    int j = 1;
+    while(!nonceFound){
+        if(j < 10){
+            if(DeadNonce[i][j] = unseededNonce){
+                nonceFound = 1;
+            } else{
+                j++;
+            }
+        }
+
+    }
+
+    if(nonceFound && nameFound){
+        return 1;
+    } else{
+        return 0;
+    }
+}
+
+void CacheDaemon::deleteDeadNonceElement(int elementIndex)
+{
+    DeadNonce[elementIndex][0] = 0;
+    DeadNonce[elementIndex][1] = 0;
+}
+
+void CacheDaemon::insertDeadNonceElement(const char* name, int nonce)
+{
+    // get name hash
+    int len =strlen(name);
+    int NameHash = mmHasher->MurmurHash3(name, len, 1) % DeadNonceHashSeed;
+
+    int unseededNonce = nonce - NameHash;
+
+    DeadNonceListPtr += 1;
+
+    deleteDeadNonceElement(DeadNonceListPtr);
+
+    DeadNonce[DeadNonceListPtr][0] = NameHash;
+    DeadNonce[DeadNonceListPtr][1] = unseededNonce;
+}
+
+int CacheDaemon::getNonce(const char* name)
+{
+    int len = strlen(name);
+    int NameHash = mmHasher->MurmurHash3(name, len,1);
+    int Nonce = uniform(0,1000) + NameHash;
+
+    return Nonce;
+}
 /*
  * ***************************************************************************
  * end of Compound Functions
