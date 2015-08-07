@@ -16,23 +16,24 @@
 package org.mixim.modules.NDNx.Application;
 
 
-import org.mixim.base.modules.IBaseApplLayer;
-
-
-simple NdnApplLayer like IBaseApplLayer
+simple NdnApplLayer like INdnApplLayer
 {
     parameters:
-        bool coreDebug  = default(false); //debug switch for base class (TestApplLayer)
-    	bool debug      = default(false); // debug switch
-    	int  headerLength @unit("bit");   // length of the application message header (in bits)
-    	string NodeType = default("slave");
-    	string TargetWord = default("car");
-    	double applicationSetupDelay @unit("seconds") = default(60s);
-    	double pktTimeToLive @unit("seconds") = default(300s);
-    	
+        bool coreDebug = default(false); //debug switch for base class (TestApplLayer)
+        bool debug = default(false); // debug switch
+        int headerLength @unit("bit");   // length of the application message header (in bits)
+        string NodeType = default("slave");
+        string TargetWord = default("car");
+        double applicationSetupDelay @unit("seconds") = default(60s);
+        double pktTimeToLive @unit("seconds") = default(300s);
+
     gates:
-    	input lowerLayerIn; // from network layer
+        input lowerLayerIn; // from network layer
         output lowerLayerOut; // to network layer
         input lowerControlIn; // control from network layer
         output lowerControlOut; // control to network layer
+        input upperLayerIn; // from Daemon layer
+        output upperLayerOut; // to Daemon layer
+        input upperControlIn; // control from Daemon layer
+        output upperControlOut; // control to Daemon layer
 }

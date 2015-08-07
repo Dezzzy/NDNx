@@ -64,6 +64,11 @@ void PendingInterestTable::initializePendingInterestTable()
     for(int i = 0; i < CacheSize; i++){
         Buffer[i] = new char[WordSize];
     }
+
+    NonceId = new int*[CacheSize];
+    for(int j = 0;j < CacheSize;j++){
+        NonceId[j] = new int[10];
+    }
     BloomFilter = new int[CacheSize];
     CacheMem = new int[CacheSize];
     RequestType = new int[CacheSize];
@@ -89,9 +94,9 @@ int PendingInterestTable::searchPendingInterestTable(const char* name)
     return cacheIndex;
 }
 
-int PendingInterestTable::updatePendingInterestTable(const char* name, LAddress::L3Type Address, int requestType, LAddress::L3Type iAddress)
+int PendingInterestTable::updatePendingInterestTable(const char* name, LAddress::L3Type Address, int requestType, LAddress::L3Type iAddress, int nonce)
 {
-    Enter_Method_Silent("updatePendingInterestTable(const char* name, LAddress::L3Type Address, int requestType, LAddress::L3Type iAddress)");
+    Enter_Method_Silent("updatePendingInterestTable(const char* name, LAddress::L3Type Address, int requestType, LAddress::L3Type iAddress, int nonce)");
     int cacheIndex;
     int updateType;
     int instructionStatus;
@@ -110,6 +115,7 @@ int PendingInterestTable::updatePendingInterestTable(const char* name, LAddress:
         }
         TTL[cacheIndex] = simTime() + timeToLive;
         updateRequestType(cacheIndex, requestType);
+        insertNewNonce(nonce, cacheIndex);
         cMessage* removeInterest = new cMessage(name, PIT_CONTROL_MESSAGE);
         scheduleAt(simTime() + timeToLive, removeInterest );
         pitControlMap::key_type Key = name;
@@ -119,18 +125,21 @@ int PendingInterestTable::updatePendingInterestTable(const char* name, LAddress:
         instructionStatus = INSERT_COMPLETED;
         EV<<"the word being inserted is:"<<name<<endl;
     } else if(updateType == hTable->UPDATE_NAME){
-
-        TTL[cacheIndex] = simTime() + timeToLive;
-        updateRequestType(cacheIndex, requestType);
-        instructionStatus = UPDATE_COMPLETED;
-        pitControlMap::key_type Key = name;
-        pitControlMap::iterator it = removeList.find(name);
-        if(it != removeList.end()){
-            cancelEvent(it->second);
-            it->second->setContextPointer((void*)(&it->first));
-            scheduleAt(simTime()+(timeToLive*2), it->second);
+        // run nonce check
+        if(nonceIdCheck(nonce,cacheIndex)){
+            TTL[cacheIndex] = simTime() + timeToLive;
+            updateRequestType(cacheIndex, requestType);
+            instructionStatus = UPDATE_COMPLETED;
+            pitControlMap::key_type Key = name;
+            pitControlMap::iterator it = removeList.find(name);
+            insertNewNonce(nonce, cacheIndex);
+            if(it != removeList.end()){
+                cancelEvent(it->second);
+                it->second->setContextPointer((void*)(&it->first));
+                scheduleAt(simTime()+(timeToLive*2), it->second);
+            }
+            EV<<"the word being updated is:"<<name<<endl;
         }
-        EV<<"the word being updated is:"<<name<<endl;
     }
 
     return instructionStatus;
@@ -169,6 +178,7 @@ int PendingInterestTable::deleteEntryFromPIT(cMessage* msg)
         TTL[cacheIndex] = 0;
         RequesterAddress[cacheIndex] = LAddress::L3NULL;
         InterfaceAddress[cacheIndex] = LAddress::L3NULL;
+        clearNonceList(cacheIndex);
     } else{
         opp_error("name could not be found in Pending Interest Table");
     }
@@ -198,6 +208,7 @@ int PendingInterestTable::deleteEntryFromPIT(const char* name)
         TTL[cacheIndex] = 0;
         RequesterAddress[cacheIndex] = LAddress::L3NULL;
         InterfaceAddress[cacheIndex] = LAddress::L3NULL;
+        clearNonceList(cacheIndex);
     } else{
         opp_error("name could not be found in Pending Interest Table");
     }
@@ -228,6 +239,55 @@ void PendingInterestTable::getPitBloomFilter(int* newBloomFilter)
     hTable->getBloomFilter(BloomFilter, newBloomFilter);
 }
 
+int PendingInterestTable::nonceIdCheck(int nonce, int index)
+{
+    int NonceFound = 0;
+
+    for(int i = 0;i < 10;i++){
+        if(nonce == NonceId[index][i]){
+            NonceFound = 1;
+        }
+    }
+
+    return !NonceFound;
+}
+
+void PendingInterestTable::insertNewNonce(int nonce, int index)
+{
+    int emptyField = 0;
+    int counter = 0;
+
+    while(!emptyField || counter < 10){
+
+        if(NonceId[index][counter] == 0){
+            emptyField = 1;
+        } else{
+            counter++;
+        }
+
+    }
+
+
+    if(emptyField){
+        NonceId[index][counter] = nonce;
+    } else{
+        NonceId[index][0] = nonce;
+    }
+
+}
+
+void PendingInterestTable::clearNonceList(int index)
+{
+    for(int i = 0; i < 10;i++){
+        NonceId[index][i] = 0;
+    }
+    NonceListHandoff(index);
+}
+
+void PendingInterestTable::NonceListHandoff(index)
+{
+
+}
 
 
 

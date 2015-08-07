@@ -17,11 +17,13 @@
 #define __MIXIM_NDNDAEMON_H_
 
 #include <omnetpp.h>
-#include "BaseModule.h"
-#include "NdnCacheDaemon.h"
+#include "BaseLayer.h"
+#include "PendingInterestTable.h"
+#include "ContentStore.h"
+#include "ForwardingInfoBase.h"
 
 
-class NdnDaemon : public BaseModule
+class NdnDaemon : public BaseLayer
 {
 public:
 
@@ -78,8 +80,18 @@ protected:
     cMessage* delayMsg;
     simtime_t setupDelay;
     virtual void initialize(int stage);
-    virtual void handleMessage(cMessage *msg);
+    virtual void handleLower(cMessage *msg);
+    virtual void handleUpperMsg(cMessage *msg);
     virtual void handleSelfMsg(cMessage* msg);
+
+    virtual void handleLowerControl(cMessage *msg){
+        delete msg;
+
+    }
+
+    virtual void handleUpperControl(cMessage *msg){
+        delete msg;
+    }
 
     int processInterest(const char* name, LAddress::L3Type reqAddr);
     int processData(const char* name);

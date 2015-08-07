@@ -15,9 +15,11 @@
 
 package org.mixim.modules.NDNx.NdnDaemon;
 
-moduleinterface INdnDaemon{
-}
-simple NdnDaemon like INdnDaemon
+
+import org.mixim.base.modules.IBaseApplLayer;
+
+
+simple NdnDaemon like IBaseApplLayer
 {
     parameters:
         double setupDelay @unit("seconds") = default(10s);

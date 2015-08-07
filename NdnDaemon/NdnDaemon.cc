@@ -23,6 +23,9 @@ void NdnDaemon::initialize(int stage)
     BaseModule::initialize(stage);
     if(stage == 0){
         CacheDaemon = FindModule<NdnCacheDaemon*>::findSubModule(findHost());
+        PitInterface = FindModule<PendingInterestTable*>::findSubModule(findHost());
+        CsInterface  = FindModule<ContentStore*>::findSubModule(findHost());
+        FibInterface = FindModule<ForwardingInfoBase*>::findSubModule(findHost());
         store = new NdnCacheDaemon::ciStore;
 
         delayMsg = new cMessage("Setup Message",SETUP_MESSAGE);
@@ -32,13 +35,16 @@ void NdnDaemon::initialize(int stage)
     }
 }
 
-void NdnDaemon::handleMessage(cMessage *msg)
+
+void NdnDaemon::handleLowerMsg(cMessage *msg)
 {
-    if(msg->isSelfMessage()){
-        handleSelfMsg(msg);
-    } else{
-        opp_error("Cache should not receive messages from other layers, recheck configuration");
-    }
+    // seperate interests and data then process
+
+}
+
+void NdnDaemon::handleUpperMsg(cMessage *msg)
+{
+    delete msg;
 }
 
 void NdnDaemon::handleSelfMsg(cMessage* msg)

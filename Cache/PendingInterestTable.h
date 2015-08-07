@@ -58,7 +58,7 @@ public:
     };
 
     int searchPendingInterestTable(const char* name);
-    int updatePendingInterestTable(const char* name, LAddress::L3Type Address, int requestType, LAddress::L3Type iAddress);
+    int updatePendingInterestTable(const char* name, LAddress::L3Type Address, int requestType, LAddress::L3Type iAddress, int nonce);
     int retreiveEntryFromPIT(const char* name, int* ReqType, LAddress::L3Type* ReqAddress,LAddress::L3Type* iAddress);
     int deleteEntryFromPIT(cMessage* msg);
     int deleteEntryFromPIT(const char* name);
@@ -74,6 +74,7 @@ protected:
     simtime_t* TTL;
     int* RequestType;
     int* hopCount;
+    int** NonceId;
     LAddress::L3Type* RequesterAddress;
     LAddress::L3Type* InterfaceAddress;
 
@@ -88,6 +89,11 @@ protected:
     virtual void handleMessage(cMessage *msg);
     virtual void handleSelfMsg(cMessage *msg);
     void initializePendingInterestTable();
+    int nonceIdCheck(int nonce, int index);
+    void insertNewNonce(int nonce, int index);
+    void clearNonceList(int index);
+    void NonceListHandoff(int index);
+
 
 
 };

@@ -41,7 +41,7 @@ public:
     int deleteFromNameCache(const char* name, char** NameCache,int* CacheMemory,int* BloomFilter,int* cacheIndex);
     int bloomFilterSearch(uint32_t k1, uint32_t k2, int* BloomFilter);
     void bloomFilterInsert(uint32_t k1, uint32_t k2, int* BloomFilter);
-    void bloomFilterRemove(uint32_t k1, uint32_t k2, int* BloomFilter)
+    void bloomFilterRemove(uint32_t k1, uint32_t k2, int* BloomFilter);
     void getBloomFilter(int* BloomFilter, int* newBloomFilter);
     void getHashValues(const char* name,uint32_t* hashValues);
     uint32_t resolveCollision(uint32_t i1, uint32_t i2);
