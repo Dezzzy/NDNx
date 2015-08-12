@@ -61,6 +61,7 @@ protected:
     int* CacheMem;
     simtime_t* TTL;
     int* CompletedRequests;
+    int** NonceId;
     csControlMap removeList;
     const static int CacheSize = 128;
     const static int WordSize = 100;
@@ -73,6 +74,9 @@ protected:
     virtual void handleSelfMsg(cMessage *msg);
     void initializeContentStore();
 
+    int nonceIdCheck(int nonce, int index);
+    void insertNewNonce(int nonce, int index);
+    void clearNonceList(int index);
 
 };
 

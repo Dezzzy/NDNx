@@ -63,6 +63,11 @@ void ContentStore::initializeContentStore()
     CacheMem = new int[CacheSize];
     CompletedRequests = new int[CacheSize];
     TTL = new simtime_t[CacheSize];
+
+    NonceId = new int*[CacheSize];
+    for(int j = 0;j <  CacheSize;j++){
+        NonceId[j] = new int[10];
+    }
     generateContentStore();
 }
 
@@ -169,6 +174,51 @@ void ContentStore::generateContentStore()
     updateContentStore("Cape Town");
     updateContentStore("medium");
     updateContentStore("nissan");
+}
+
+int ContentStore::nonceIdCheck(int nonce, int index)
+{
+    int NonceFound = 0;
+
+    for(int i = 0;i < 10;i++){
+        if(nonce == NonceId[index][i]){
+            NonceFound = 1;
+        }
+    }
+
+    return !NonceFound;
+}
+
+void ContentStore::insertNewNonce(int nonce, int index)
+{
+    int emptyField = 0;
+    int counter = 0;
+
+    while(!emptyField || counter < 10){
+
+        if(NonceId[index][counter] == 0){
+            emptyField = 1;
+        } else{
+            counter++;
+        }
+
+    }
+
+
+    if(emptyField){
+        NonceId[index][counter] = nonce;
+    } else{
+        NonceId[index][0] = nonce;
+    }
+
+}
+
+void ContentStore::clearNonceList(int index)
+{
+    for(int i = 0; i < 10;i++){
+        NonceId[index][i] = 0;
+    }
+
 }
 
 
