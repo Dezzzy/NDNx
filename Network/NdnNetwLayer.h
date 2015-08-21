@@ -19,7 +19,7 @@
 #include <omnetpp.h>
 #include "BaseNetwLayer.h"
 #include "NdnNetPkt_m.h"
-#include "NdnDaemon.h"
+
 
 class NdnNetPkt;
 

@@ -71,11 +71,15 @@ void CacheDaemon::handleSelfMsg(cMessage* msg)
 
 }
 
-void CacheDaemon::handleLowerMsg(cMessage *msg)
+void CacheDaemon::handleLowerMsg(cMessage* msg)
 {
-
+    // no layer functionality yet
 }
 
+void CacheDaemon::handleLowerControl(cMessage* msg)
+{
+    // no layer functionality yet
+}
 
 
 /*
@@ -84,9 +88,9 @@ void CacheDaemon::handleLowerMsg(cMessage *msg)
  * ***************************************************************************
  */
 
-int CacheDaemon::processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int hopCount)
+int CacheDaemon::processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int nonce)
 {
-    Enter_Method_Silent("processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int hopCount)");
+    Enter_Method_Silent("processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int nonce)");
     int instructionStatus;
     int applicationInstruction;
 
@@ -96,7 +100,7 @@ int CacheDaemon::processInterest(const char* name, LAddress::L3Type reqAddr, LAd
         Pit->deleteEntryFromPIT(name);
     } else{
 
-        instructionStatus = Pit->updatePendingInterestTable(name,reqAddr,Pit->EXT_REQ,srcAddr);
+        instructionStatus = Pit->updatePendingInterestTable(name,reqAddr,Pit->EXT_REQ,srcAddr, nonce);
         if(instructionStatus == PendingInterestTable::INSERT_COMPLETED){
             applicationInstruction = SEND_INTEREST;
         } else{
@@ -107,7 +111,7 @@ int CacheDaemon::processInterest(const char* name, LAddress::L3Type reqAddr, LAd
     return applicationInstruction;
 }
 
-int CacheDaemon::generateInterestEntry(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr)
+int CacheDaemon::generateInterestEntry(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int nonce)
 {
     Enter_Method_Silent("generateInterestEntry(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr)");
     int instructionStatus;
@@ -115,7 +119,7 @@ int CacheDaemon::generateInterestEntry(const char* name, LAddress::L3Type reqAdd
     instructionStatus = Cs->retreiveContentStore(name);
 
     if(instructionStatus == ContentStore::DATA_NOT_FOUND){
-        instructionStatus = Pit->updatePendingInterestTable(name, reqAddr, Pit->SELF_REQ, srcAddr);
+        instructionStatus = Pit->updatePendingInterestTable(name, reqAddr, Pit->SELF_REQ, srcAddr, nonce);
         if(instructionStatus == Pit->INSERT_COMPLETED){
             applicationInstruction = SEND_INTEREST;
 
@@ -123,15 +127,15 @@ int CacheDaemon::generateInterestEntry(const char* name, LAddress::L3Type reqAdd
             applicationInstruction = DO_NOTHING;
         }
     } else{
-        Cs->updateContentStore(name);
+        //Cs->updateContentStore(name);
     }
 
     return applicationInstruction;
 }
 
-int CacheDaemon::processData(const char* name, int* hopCount, LAddress::L3Type* iAddr)
+int CacheDaemon::processData(const char* name, int* hopCount, LAddress::L3Type* iAddr,int nonce)
 {
-    Enter_Method_Silent("processData(const char* name, int* hopCount, LAddress::L3Type* iAddr)");
+    Enter_Method_Silent("processData(const char* name, int* hopCount, LAddress::L3Type* iAddr, int nonce)");
     int instructionStatus;
     int applicationInstruction;
     LAddress::L3Type* reqAddr;
@@ -142,7 +146,7 @@ int CacheDaemon::processData(const char* name, int* hopCount, LAddress::L3Type* 
     if(instructionStatus == PendingInterestTable::DATA_FOUND){
         switch(*reqType){
         case PendingInterestTable::SELF_REQ:
-            Cs->updateContentStore(name);
+            Cs->updateContentStore(name, nonce);
             applicationInstruction = INTEREST_FOUND;
             break;
         case PendingInterestTable::EXT_REQ:
@@ -151,13 +155,13 @@ int CacheDaemon::processData(const char* name, int* hopCount, LAddress::L3Type* 
 
             break;
         case PendingInterestTable::DUAL_TYPE_REQ:
-            Cs->updateContentStore(name);
+            Cs->updateContentStore(name, nonce);
             Fib->retreiveEntryFromNameInterfaceList(name, hopCount, iAddr);
             applicationInstruction = SEND_DATA_INTEREST_FOUND;
             break;
         }
     } else{
-        Cs->updateContentStore(name);
+        Cs->updateContentStore(name,nonce);
         applicationInstruction = DO_NOTHING;
     }
 
@@ -393,24 +397,28 @@ int CacheDaemon::searchDeadNonceList(const char* name, int nonce)
 
 void CacheDaemon::deleteDeadNonceElement(int elementIndex)
 {
-    DeadNonce[elementIndex][0] = 0;
-    DeadNonce[elementIndex][1] = 0;
+    for(int i = 0;i < 10;i++){
+        DeadNonce[elementIndex][i] = 0;
+    }
 }
 
-void CacheDaemon::insertDeadNonceElement(const char* name, int nonce)
+void CacheDaemon::insertDeadNonceElement(const char* name, int* nonce)
 {
     // get name hash
     int len =strlen(name);
     int NameHash = mmHasher->MurmurHash3(name, len, 1) % DeadNonceHashSeed;
 
-    int unseededNonce = nonce - NameHash;
+    //int unseededNonce = nonce - NameHash;
 
     DeadNonceListPtr += 1;
 
     deleteDeadNonceElement(DeadNonceListPtr);
 
     DeadNonce[DeadNonceListPtr][0] = NameHash;
-    DeadNonce[DeadNonceListPtr][1] = unseededNonce;
+
+    for(int i = 1; i < 10;i++){
+        DeadNonce[DeadNonceListPtr][i] = nonce[i-1];
+    }
 }
 
 int CacheDaemon::getNonce(const char* name)
@@ -421,6 +429,20 @@ int CacheDaemon::getNonce(const char* name)
 
     return Nonce;
 }
+
+void CacheDaemon::pitNoncelistHandoff(const char* name, int* nonce)
+{
+    PendingInterestTable::NonceElement* tmp = new PendingInterestTable::NonceElement;
+
+    int pitInstruction;
+    do{
+        pitInstruction = Pit->NonceListHandoff(tmp);
+        insertDeadNonceElement(tmp->name, tmp->nonce);
+        Pit->popElement();
+    }while(pitInstruction != PendingInterestTable::NONCELIST_EMPTY);
+
+}
+
 /*
  * ***************************************************************************
  * end of Compound Functions
@@ -491,7 +513,7 @@ void CacheDaemon::PendingInterestTableTesting()
     int requestType = PendingInterestTable::EXT_REQ;
     int reqType = 99;
     //
-    Pit->updatePendingInterestTable("test",srcAddress,requestType,interfaceAddress);
+    Pit->updatePendingInterestTable("test",srcAddress,requestType,interfaceAddress,15122);
     Pit->retreiveEntryFromPIT("test",&reqType,&sAddress,&iAddress);
     int pitCheck = 0;
     while(pitCheck == 0){
@@ -503,7 +525,7 @@ void CacheDaemon::PendingInterestTableTesting()
     }
 
     if(pitCheck){
-        Pit->updatePendingInterestTable("butterfly",srcAddress,requestType,interfaceAddress);
+        Pit->updatePendingInterestTable("butterfly",srcAddress,requestType,interfaceAddress,66666);
         Pit->retreiveEntryFromPIT("butterfly",&reqType,&sAddress,&iAddress);
         int secondPitCheck = 0;
         if(reqType == requestType && sAddress == srcAddress && iAddress == interfaceAddress){
@@ -516,7 +538,7 @@ void CacheDaemon::PendingInterestTableTesting()
 
 void CacheDaemon::ContentStoreTesting()
 {
-    Cs->updateContentStore("test");
+    Cs->updateContentStore("test", 1512);
     int DaemonInstruction = Cs->retreiveContentStore("test");
 
     // Insertion and Retrieval Test
@@ -551,7 +573,7 @@ void CacheDaemon::ContentStoreTesting()
     }
 
     // Third Test, Error Test
-    Cs->updateContentStore("Israel");
+    Cs->updateContentStore("Israel",6666);
     DaemonInstruction = Cs->retreiveContentStore("fuckup");
     //DaemonInstruction = Cs->retreiveContentStore("test");
     switch(DaemonInstruction){

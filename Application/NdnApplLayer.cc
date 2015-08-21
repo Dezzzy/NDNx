@@ -141,7 +141,7 @@ void NdnApplLayer::generateInterestPkt(const char* name)
     int propDistance = STANDARD_HOP;
     int msgId = cDaemon->getNonce(name);
 
-    instructionStatus = cDaemon->generateInterestEntry(name, myApplAddr(), myApplAddr());
+    instructionStatus = cDaemon->generateInterestEntry(name, myApplAddr(), myApplAddr(), msgId);
 
     if(instructionStatus == cDaemon->SEND_INTEREST){
         KnownMsgs.insert(msgId);
@@ -243,7 +243,7 @@ void NdnApplLayer::processDataPkt(NdnAppPkt* pkt)
     *iAddr = LAddress::L3NULL;
 
     nbHops = pkt->getNbHops() + 1;
-    instructionStatus = cDaemon->processData(pkt->getName(),hCount,iAddr);
+    instructionStatus = cDaemon->processData(pkt->getName(),hCount,iAddr,pkt->getMsgId());
     if(instructionStatus == CacheDaemon::SEND_DATA || instructionStatus == CacheDaemon::SEND_DATA_INTEREST_FOUND){
         if(nbHops < pkt->getMaxNbHops()){
 

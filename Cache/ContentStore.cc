@@ -79,9 +79,9 @@ int ContentStore::searchContentStore(const char* name)
     return cacheIndex;
 }
 
-int ContentStore::updateContentStore(const char* name)
+int ContentStore::updateContentStore(const char* name, int nonce)
 {
-    Enter_Method_Silent("updateContentStore(const char* name)");
+    Enter_Method_Silent("updateContentStore(const char* name, int nonce)");
     int csIndex;
     int updateStatus;
     int instructionStatus;
@@ -97,14 +97,16 @@ int ContentStore::updateContentStore(const char* name)
         pair<csControlMap::iterator, bool> ret = removeList.insert(controlPair);
         (ret.first)->second->setContextPointer((void*)(&(ret.first)->first));
     } else if(updateStatus == hTable->UPDATE_NAME){
-        TTL[csIndex] = timeToLive;
-        instructionStatus = UPDATE_COMPLETED;
-        csControlMap::key_type hashKey = name;
-        csControlMap::iterator it = removeList.find(hashKey);
-        if(it != removeList.end()){
-            cancelEvent(it->second);
-            it->second->setContextPointer((void*)(&it->first));
-            scheduleAt(simTime()+(timeToLive*2), it->second);
+        if(nonceIdCheck(nonce,csIndex)){
+            TTL[csIndex] = timeToLive;
+            instructionStatus = UPDATE_COMPLETED;
+            csControlMap::key_type hashKey = name;
+            csControlMap::iterator it = removeList.find(hashKey);
+            if(it != removeList.end()){
+                cancelEvent(it->second);
+                it->second->setContextPointer((void*)(&it->first));
+                scheduleAt(simTime()+(timeToLive*2), it->second);
+            }
         }
     }
 
@@ -152,6 +154,7 @@ int ContentStore::deleteFromContentStore(cMessage* msg)
     } else{
         instructionStatus = DATA_DELETED;
         CacheMem[csIndex] = 0;
+        clearNonceList(csIndex);
     }
 
     EV<<"delete complete, Cs"<<endl;
@@ -166,14 +169,14 @@ void ContentStore::getCsBloomFilter(int* newBloomFilter)
 
 void ContentStore::generateContentStore()
 {
-    updateContentStore("car");
-    updateContentStore("speed");
-    updateContentStore("location");
-    updateContentStore("density");
-    updateContentStore("average");
-    updateContentStore("Cape Town");
-    updateContentStore("medium");
-    updateContentStore("nissan");
+    updateContentStore("car",1111);
+    updateContentStore("speed",2222);
+    updateContentStore("location",3333);
+    updateContentStore("density",4444);
+    updateContentStore("average",5555);
+    updateContentStore("Cape Town",6666);
+    updateContentStore("medium",7777);
+    updateContentStore("nissan",8888);
 }
 
 int ContentStore::nonceIdCheck(int nonce, int index)

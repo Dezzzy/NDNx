@@ -17,7 +17,6 @@
 #define __MIXIM_NDNAPPLLAYER_H_
 
 #include <omnetpp.h>
-#include "NdnDaemon.h"
 #include "NdnAppPkt_m.h"
 #include "BaseApplLayer.h"
 #include "CacheDaemon.h"

@@ -48,7 +48,7 @@ public:
     };
 
     int searchContentStore(const char* name);
-    int updateContentStore(const char* name);
+    int updateContentStore(const char* name, int nonce);
     int retreiveContentStore(const char* name);
     int deleteFromContentStore(cMessage* msg);
     void getCsBloomFilter(int* newBloomFilter);

@@ -24,11 +24,21 @@
 #include "HashTable.h"
 
 
+
 class PendingInterestTable : public BaseModule
 {
 public:
 
     typedef std::map<const char*, cMessage*> pitControlMap;
+
+
+    struct NonceElement{
+        char name[100];
+        int nonce[10];
+        int elementFull;
+    };
+
+    typedef std::list<NonceElement> NonceList;
 
     enum REQUEST_KINDS{
         SELF_REQ,
@@ -40,15 +50,13 @@ public:
     enum INSTRUCTION_KINDS{
 
         INSERT_COMPLETED,
-
         UPDATE_COMPLETED,
         DATA_FOUND,
         DATA_NOT_FOUND,
         DATA_DELETED,
-
         NAME_FOUND,
-
-
+        NONCELIST_EMPTY,
+        NONCELIST_NOT_EMPTY
     };
 
     enum PENDING_INTEREST_MESSAGE_TYPES{
@@ -64,7 +72,10 @@ public:
     int deleteEntryFromPIT(const char* name);
     void updateRequestType(int index, int reqType);
     void getPitBloomFilter(int* newBloomFilter);
+    int NonceListHandoff(NonceElement* noncePtr);
+    void popElement();
 
+    //CacheDaemon* cDaemon;
 
 protected:
 
@@ -85,6 +96,9 @@ protected:
     HashTable* hTable;
     pitControlMap removeList;
     simtime_t timeToLive;
+    //NonceList* DeadNonceList;
+    NonceList* dNonceList;
+
     virtual void initialize(int stage);
     virtual void handleMessage(cMessage *msg);
     virtual void handleSelfMsg(cMessage *msg);
@@ -92,7 +106,7 @@ protected:
     int nonceIdCheck(int nonce, int index);
     void insertNewNonce(int nonce, int index);
     void clearNonceList(int index);
-    void NonceListHandoff(int index);
+
 
 
 

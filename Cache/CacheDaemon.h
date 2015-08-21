@@ -21,14 +21,14 @@
 #include <map>
 
 #include <omnetpp.h>
-#include "BaseLayer.h"
+#include "BaseModule.h"
 #include <bitset>
 #include "SimpleAddress.h"
 #include "PendingInterestTable.h"
 #include "ContentStore.h"
 #include "ForwardingInfoBase.h"
 
-class CacheDaemon : public BaseLayer
+class CacheDaemon : public BaseModule
 {
 public:
     typedef std::bitset<128> BloomFilterMap;
@@ -81,9 +81,9 @@ public:
     };
 
     // Compound Functions
-    int processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr,int hopCount);
-    int generateInterestEntry(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr);
-    int processData(const char* name, int* hopCount, LAddress::L3Type* iAddr);
+    int processInterest(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr,int nonce);
+    int generateInterestEntry(const char* name, LAddress::L3Type reqAddr, LAddress::L3Type srcAddr, int nonce);
+    int processData(const char* name, int* hopCount, LAddress::L3Type* iAddr,int nonce);
     void updateForwardingInfoBase(LAddress::L3Type hopAddress, uint32_t** oneHop,uint32_t** twoHop,uint32_t** threeHop, uint32_t** xHop);
     void updateInterfaceList(const char* name, int hopCount, LAddress::L3Type hopAddress);
     void generatePacketMaps(uint32_t** oneHopList, uint32_t** twoHopList, uint32_t** threeHopList, uint32_t** xHopList);
@@ -93,16 +93,16 @@ public:
 
     int searchDeadNonceList(const char* name, int nonce);
     void deleteDeadNonceElement(int elementIndex);
-    void insertDeadNonceElement(const char* name, int nonce);
+    void insertDeadNonceElement(const char* name, int* nonce);
     int getNonce(const char* name);
-
+    void pitNoncelistHandoff(const char* name, int* nonce);
 
 
 protected:
     int CacheSize;
     int WordSize;
     int TestingVariable;
-    int* DeadNonce;
+    int** DeadNonce;
     int D_Nonce_List_Size = 50;
     int DeadNonceHashSeed = 5000;
     int DeadNonceListPtr;
@@ -114,13 +114,24 @@ protected:
     ContentStore* Cs;
     ForwardingInfoBase* Fib;
     cMessage* startMsg;
+
     virtual void initialize(int stage);
-    virtual void handleMessage(cMessage *msg);
     virtual void handleSelfMsg(cMessage *msg);
+    virtual void handleUpperMsg(cMessage *msg){
+        opp_error("no upper layer for CacheDaemon, check configuration");
+    }
+
+    /** @brief Handle messages from lower layer */
     virtual void handleLowerMsg(cMessage *msg);
-    virtual void handleLowerControl(cMessage *msg) = 0;
-    virtual void handleUpperMsg(cMessage *msg) = 0;
-    virtual void handleUpperControl(cMessage *msg) = 0;
+
+    /** @brief Handle control messages from lower layer */
+    virtual void handleLowerControl(cMessage *msg);
+
+    /** @brief Handle control messages from upper layer */
+    virtual void handleUpperControl(cMessage *msg){
+        opp_error("no upper layer control for CacheDaemon, check configuration");
+    }
+
     void initializeCache();
 
 
